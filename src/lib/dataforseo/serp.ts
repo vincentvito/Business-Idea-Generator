@@ -47,7 +47,10 @@ async function fetchFromDataForSEO(
   );
 
   const result = response.tasks?.[0]?.result?.[0];
-  if (!result?.items) return generateMockSerpResults(query);
+  if (!result?.items) {
+    console.warn("[DataForSEO SERP] API returned no items for:", query);
+    return generateMockSerpResults(query);
+  }
 
   // Filter only organic results
   const organicItems = result.items.filter((item) => item.type === "organic");

@@ -16,6 +16,7 @@ import {
   Minus,
   ShoppingCart,
   Star,
+  AlertTriangle,
 } from "lucide-react";
 import { PDFDownloadButton } from "@/components/shared/pdf-download-button";
 import type {
@@ -36,6 +37,7 @@ interface ValidationDashboardProps {
   moat: MoatAnalysisType | null;
   amazon: AmazonProductData[] | null;
   scores: ScoreData | null;
+  warnings?: Map<string, string>;
 }
 
 function verdictBadge(verdict: string) {
@@ -77,6 +79,21 @@ function trendBadge(direction: TrendData["trend_direction"], growth: number) {
   );
 }
 
+function StageWarning({ message }: { message: string }) {
+  return (
+    <div className="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 rounded px-2 py-1">
+      <AlertTriangle className="h-3 w-3 shrink-0" />
+      <span>{message}</span>
+    </div>
+  );
+}
+
+function EmptyState({ message }: { message: string }) {
+  return (
+    <p className="text-sm text-muted-foreground py-2">{message}</p>
+  );
+}
+
 export function ValidationDashboard({
   keywords,
   metrics,
@@ -85,6 +102,7 @@ export function ValidationDashboard({
   moat,
   amazon,
   scores,
+  warnings,
 }: ValidationDashboardProps) {
   const totalVolume = metrics?.reduce((sum, m) => sum + m.avg_monthly_searches, 0) ?? 0;
 
@@ -162,13 +180,22 @@ export function ValidationDashboard({
       )}
 
       {/* Keyword Metrics Table */}
-      {metrics && metrics.length > 0 && (
+      {metrics !== null && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Keyword Data</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">Keyword Data</CardTitle>
+              {warnings?.get("metrics") && (
+                <StageWarning message={warnings.get("metrics")!} />
+              )}
+            </div>
           </CardHeader>
           <CardContent>
-            <KeywordTable metrics={metrics} />
+            {metrics.length > 0 ? (
+              <KeywordTable metrics={metrics} />
+            ) : (
+              <EmptyState message="No search volume data returned. The API may not support this keyword or location. Check your DataForSEO dashboard for details." />
+            )}
           </CardContent>
         </Card>
       )}
@@ -206,7 +233,7 @@ export function ValidationDashboard({
       {totalVolume > 0 && <RevenueCalculator defaultVolume={totalVolume} />}
 
       {/* Amazon Marketplace Data */}
-      {amazon && amazon.length > 0 && (
+      {amazon !== null && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -215,58 +242,62 @@ export function ValidationDashboard({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {amazon.map((amz) => (
-                <div key={amz.keyword} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">&ldquo;{amz.keyword}&rdquo;</span>
-                    <span className="text-xs text-muted-foreground">
-                      {amz.total_products} products found
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-                    <div className="rounded-lg bg-muted/50 p-2">
-                      <p className="text-lg font-semibold">${amz.avg_price.toFixed(0)}</p>
-                      <p className="text-xs text-muted-foreground">Avg Price</p>
+            {amazon.length > 0 ? (
+              <div className="space-y-4">
+                {amazon.map((amz) => (
+                  <div key={amz.keyword} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">&ldquo;{amz.keyword}&rdquo;</span>
+                      <span className="text-xs text-muted-foreground">
+                        {amz.total_products} products found
+                      </span>
                     </div>
-                    <div className="rounded-lg bg-muted/50 p-2">
-                      <div className="flex items-center justify-center gap-1">
-                        <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                        <span className="text-lg font-semibold">{amz.avg_rating.toFixed(1)}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                      <div className="rounded-lg bg-muted/50 p-2">
+                        <p className="text-lg font-semibold">${amz.avg_price.toFixed(0)}</p>
+                        <p className="text-xs text-muted-foreground">Avg Price</p>
                       </div>
-                      <p className="text-xs text-muted-foreground">Avg Rating</p>
-                    </div>
-                    <div className="rounded-lg bg-muted/50 p-2">
-                      <p className="text-lg font-semibold">{amz.total_products}</p>
-                      <p className="text-xs text-muted-foreground">Products</p>
-                    </div>
-                  </div>
-                  {amz.top_products.length > 0 && (
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-muted-foreground">Top Products</p>
-                      {amz.top_products.slice(0, 3).map((product, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center justify-between text-xs py-1 border-b last:border-0"
-                        >
-                          <span className="truncate mr-2 flex-1">{product.title}</span>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className="tabular-nums">${product.price.toFixed(2)}</span>
-                            <div className="flex items-center gap-0.5">
-                              <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                              <span className="tabular-nums">{product.rating.toFixed(1)}</span>
-                            </div>
-                            <span className="text-muted-foreground">
-                              ({product.reviews_count.toLocaleString()})
-                            </span>
-                          </div>
+                      <div className="rounded-lg bg-muted/50 p-2">
+                        <div className="flex items-center justify-center gap-1">
+                          <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                          <span className="text-lg font-semibold">{amz.avg_rating.toFixed(1)}</span>
                         </div>
-                      ))}
+                        <p className="text-xs text-muted-foreground">Avg Rating</p>
+                      </div>
+                      <div className="rounded-lg bg-muted/50 p-2">
+                        <p className="text-lg font-semibold">{amz.total_products}</p>
+                        <p className="text-xs text-muted-foreground">Products</p>
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
+                    {amz.top_products.length > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-muted-foreground">Top Products</p>
+                        {amz.top_products.slice(0, 3).map((product, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center justify-between text-xs py-1 border-b last:border-0"
+                          >
+                            <span className="truncate mr-2 flex-1">{product.title}</span>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="tabular-nums">${product.price.toFixed(2)}</span>
+                              <div className="flex items-center gap-0.5">
+                                <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                                <span className="tabular-nums">{product.rating.toFixed(1)}</span>
+                              </div>
+                              <span className="text-muted-foreground">
+                                ({product.reviews_count.toLocaleString()})
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState message="No Amazon marketplace data returned. The Amazon Products API may not be included in your DataForSEO plan." />
+            )}
           </CardContent>
         </Card>
       )}

@@ -93,6 +93,7 @@ export default function ValidatePage() {
     stageMessage,
     progress,
     completedStages,
+    stageWarnings,
     error,
     errorType,
     result,
@@ -167,7 +168,9 @@ export default function ValidatePage() {
   return (
     <PageContainer>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">60-Second Reality Check</h1>
+        <h1 className="text-2xl font-bold text-purple-600">
+          {isRunning ? "Validating Your Idea…" : "60-Second Reality Check"}
+        </h1>
         <p className="text-muted-foreground mt-1">
           Enter a business idea and get instant validation backed by real data.
         </p>
@@ -224,6 +227,7 @@ export default function ValidatePage() {
             moat={progressiveResult.moat}
             amazon={progressiveResult.amazon}
             scores={progressiveResult.scores}
+            warnings={stageWarnings}
           />
         </div>
       )}

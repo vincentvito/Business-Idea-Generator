@@ -17,38 +17,78 @@ interface ClassifiedError {
 
 export function classifyError(error: unknown): ClassifiedError {
   if (error instanceof DataForSEOError) {
-    if (error.statusCode === 401 || error.statusCode === 403) {
+    const code = error.statusCode;
+
+    // HTTP-level status codes (2-3 digit)
+    if (code === 401 || code === 403) {
       return {
         type: DataForSEOErrorType.AUTHENTICATION,
         message: "Invalid DataForSEO credentials. Check DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD.",
         retryable: false,
       };
     }
-    if (error.statusCode === 402) {
+    if (code === 402) {
       return {
         type: DataForSEOErrorType.QUOTA_EXCEEDED,
         message: "DataForSEO balance depleted. Add funds at dataforseo.com.",
         retryable: false,
       };
     }
-    if (error.statusCode === 429) {
+    if (code === 429) {
       return {
         type: DataForSEOErrorType.RATE_LIMITED,
         message: "DataForSEO rate limit exceeded. Retrying shortly.",
         retryable: true,
       };
     }
-    if (error.statusCode >= 500) {
+    if (code >= 500 && code < 1000) {
       return {
         type: DataForSEOErrorType.NETWORK,
         message: "DataForSEO server error. Retrying shortly.",
         retryable: true,
       };
     }
-    if (error.statusCode === 400) {
+    if (code === 400) {
       return {
         type: DataForSEOErrorType.INVALID_REQUEST,
         message: `Invalid request: ${error.message}`,
+        retryable: false,
+      };
+    }
+
+    // DataForSEO task-level status codes (5-digit, e.g. 40101, 40501)
+    if (code >= 40100 && code < 40200) {
+      return {
+        type: DataForSEOErrorType.AUTHENTICATION,
+        message: `DataForSEO auth error (${code}): ${error.message}`,
+        retryable: false,
+      };
+    }
+    if (code >= 40200 && code < 40300) {
+      return {
+        type: DataForSEOErrorType.QUOTA_EXCEEDED,
+        message: `DataForSEO insufficient funds (${code}): ${error.message}`,
+        retryable: false,
+      };
+    }
+    if (code >= 42900 && code < 43000) {
+      return {
+        type: DataForSEOErrorType.RATE_LIMITED,
+        message: `DataForSEO rate limited (${code}): ${error.message}`,
+        retryable: true,
+      };
+    }
+    if (code >= 50000) {
+      return {
+        type: DataForSEOErrorType.NETWORK,
+        message: `DataForSEO internal error (${code}): ${error.message}`,
+        retryable: true,
+      };
+    }
+    if (code >= 40000) {
+      return {
+        type: DataForSEOErrorType.INVALID_REQUEST,
+        message: `DataForSEO task error (${code}): ${error.message}`,
         retryable: false,
       };
     }

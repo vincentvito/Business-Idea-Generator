@@ -38,6 +38,7 @@ export async function runValidationPipeline(
     type: "stage_complete",
     stage: "metrics",
     data: { metrics, source: metricsSource },
+    ...(metricsSource === "mock" ? { warning: "Using estimated data — live API returned an error" } : {}),
   });
 
   // Stage 3: Trend Analysis (DataForSEO Google Trends)

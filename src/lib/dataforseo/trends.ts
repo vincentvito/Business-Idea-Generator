@@ -75,7 +75,10 @@ async function fetchFromDataForSEO(
   );
 
   const result = response.tasks?.[0]?.result?.[0];
-  if (!result?.items) return generateMockTrends(keywords);
+  if (!result?.items) {
+    console.warn("[DataForSEO Trends] API returned no items for:", keywords);
+    return generateMockTrends(keywords);
+  }
 
   return result.items.map((item) => {
     const timeline = item.data.map((dp) => ({

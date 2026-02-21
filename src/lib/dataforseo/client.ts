@@ -34,7 +34,19 @@ export async function dataforseoRequest<T>(
     );
   }
 
-  return response.json();
+  const data: DataForSEOResponse<T> = await response.json();
+
+  // Validate task-level status — DataForSEO returns HTTP 200 even when
+  // the task itself fails (e.g. endpoint not in plan, invalid params).
+  const task = data.tasks?.[0];
+  if (task && task.status_code !== 20000 && task.status_code !== 20100) {
+    throw new DataForSEOError(
+      `Task error ${task.status_code}: ${task.status_message}`,
+      task.status_code
+    );
+  }
+
+  return data;
 }
 
 export class DataForSEOError extends Error {

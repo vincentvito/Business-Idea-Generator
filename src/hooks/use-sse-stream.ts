@@ -18,6 +18,7 @@ export interface SSEStreamState<TResult> {
   progress: number;
   events: PipelineEvent[];
   completedStages: Map<string, unknown>;
+  stageWarnings: Map<string, string>;
   result: TResult | null;
   error: string | null;
   errorType: ErrorType | null;
@@ -35,6 +36,7 @@ export function useSSEStream<TInput, TResult>(
     progress: 0,
     events: [],
     completedStages: new Map(),
+    stageWarnings: new Map(),
     result: null,
     error: null,
     errorType: null,
@@ -52,6 +54,7 @@ export function useSSEStream<TInput, TResult>(
     setState((prev) => {
       const events = [...prev.events, ...batch];
       const completedStages = new Map(prev.completedStages);
+      const stageWarnings = new Map(prev.stageWarnings);
       let currentStage = prev.currentStage;
       let stageMessage = prev.stageMessage;
       let progress = prev.progress;
@@ -60,6 +63,9 @@ export function useSSEStream<TInput, TResult>(
       for (const event of batch) {
         if (event.type === "stage_complete") {
           completedStages.set(event.stage, event.data);
+          if (event.warning) {
+            stageWarnings.set(event.stage, event.warning);
+          }
         }
         if (event.type === "stage_start") {
           currentStage = event.stage;
@@ -77,6 +83,7 @@ export function useSSEStream<TInput, TResult>(
         ...prev,
         events,
         completedStages,
+        stageWarnings,
         currentStage,
         stageMessage,
         progress,
@@ -111,6 +118,7 @@ export function useSSEStream<TInput, TResult>(
         progress: 0,
         events: [],
         completedStages: new Map(),
+        stageWarnings: new Map(),
         result: null,
         error: null,
         errorType: null,

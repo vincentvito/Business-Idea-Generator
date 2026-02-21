@@ -125,6 +125,9 @@ async function fetchFromDataForSEO(
   );
 
   const results = response.tasks?.[0]?.result ?? [];
+  if (results.length === 0) {
+    console.warn("[DataForSEO Keywords] API returned 0 results for:", keywords);
+  }
 
   const monthlySearches = (r: SearchVolumeResult) => {
     const ms = getField<{ year: number; month: number; search_volume: number }[]>(r, "monthly_searches");

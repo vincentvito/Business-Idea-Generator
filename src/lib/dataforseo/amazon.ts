@@ -96,6 +96,7 @@ async function fetchAmazonLive(
 
   const result = response.tasks?.[0]?.result?.[0];
   if (!result?.items || result.items.length === 0) {
+    console.warn("[DataForSEO Amazon] API returned 0 items for:", keyword);
     return {
       keyword,
       total_products: 0,
