@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Market-Fit Engine",
+  title: "FoodLaunch",
   description:
-    "Validate business ideas in 60 seconds with real search data and AI-powered competitive analysis.",
+    "Discover and validate restaurant, food truck, bakery, and food business ideas with real market data and AI-powered analysis.",
 };
 
 export default function RootLayout({

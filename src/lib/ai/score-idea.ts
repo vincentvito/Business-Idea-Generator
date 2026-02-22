@@ -12,7 +12,7 @@ import type {
 const SCORE_TOOL = {
   name: "score_idea" as const,
   description:
-    "Computes a quantitative validation score for a business idea based on search data, trends, competitors, and ecommerce signals.",
+    "Computes a quantitative validation score for a food business idea based on search data, trends, competitors, and marketplace signals.",
   input_schema: {
     type: "object" as const,
     properties: {
@@ -136,9 +136,9 @@ ${topProduct ? `- Top product: "${topProduct.title}" — $${topProduct.price.toF
     messages: [
       {
         role: "user",
-        content: `Score this business idea based on the data below.
+        content: `Score this food business idea based on the data below.
 
-Business Niche: ${keywords.niche}
+Food Business Niche: ${keywords.niche}
 Location: ${keywords.location}
 Category: ${keywords.category}
 

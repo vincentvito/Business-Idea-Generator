@@ -33,7 +33,7 @@ export async function runDiscoveryPipeline(
   emit({
     type: "stage_start",
     stage: "generation",
-    message: "Generating business ideas...",
+    message: "Generating food business ideas...",
   });
 
   const allIdeas = await generateIdeas(category, location, filters, seedKeywords);

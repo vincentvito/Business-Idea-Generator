@@ -42,7 +42,7 @@ export default function TopIdeasPage() {
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
           <Trophy className="h-5 w-5 text-yellow-500" />
-          <h1 className="text-2xl font-bold">Top Business Ideas</h1>
+          <h1 className="text-2xl font-bold">Top Food Business Ideas</h1>
         </div>
         <p className="text-muted-foreground">
           The highest-scoring validated ideas, ranked by data.

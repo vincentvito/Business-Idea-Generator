@@ -1,16 +1,28 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { PageContainer } from "@/components/layout/page-container";
+import { SectionBand } from "@/components/layout/section-band";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { IdeaInputForm } from "@/components/validate/idea-input-form";
 import { PipelineProgress } from "@/components/validate/pipeline-progress";
 import { ValidationDashboard } from "@/components/validate/validation-dashboard";
+import { LiveFeed } from "@/components/home/live-feed";
 import { useSSEStream } from "@/hooks/use-sse-stream";
 import { useUsage } from "@/hooks/use-usage";
 import { useUser } from "@/hooks/use-user";
 import { UsageMeter } from "@/components/paywall/usage-meter";
 import { UpgradePrompt } from "@/components/paywall/upgrade-prompt";
 import { VALIDATION_STAGES } from "@/lib/constants";
+import {
+  ShieldCheck,
+  Sparkles,
+  Lightbulb,
+  Target,
+  BarChart3,
+  Users,
+  TrendingUp,
+  CheckCircle,
+} from "lucide-react";
 import type { PipelineEvent } from "@/types/pipeline";
 import type {
   KeywordExtractionResult,
@@ -81,6 +93,41 @@ function transformValidationResult(events: PipelineEvent[]): ValidationResult {
 
 const stages = VALIDATION_STAGES.map((s) => ({ id: s.id, label: s.label }));
 
+const HOW_IT_WORKS = [
+  { step: 1, icon: Lightbulb, title: "Describe Your Food Idea", desc: "Tell us about your food business concept in a few sentences" },
+  { step: 2, icon: Sparkles, title: "AI Analyzes Everything", desc: "Keywords, search volume, food trends, competitors & market data" },
+  { step: 3, icon: Target, title: "Get Your Verdict", desc: "A data-backed score with actionable insights" },
+] as const;
+
+const FEATURES = [
+  {
+    icon: BarChart3,
+    color: "text-blue-500",
+    bg: "bg-blue-50",
+    title: "Search Volume Data",
+    desc: "Real Google search metrics for your idea's keywords",
+  },
+  {
+    icon: Users,
+    color: "text-yellow-500",
+    bg: "bg-yellow-50",
+    title: "Competitor Analysis",
+    desc: "See who you're up against and where the gaps are",
+  },
+  {
+    icon: Target,
+    color: "text-purple-500",
+    bg: "bg-purple-50",
+    title: "Viability Score",
+    desc: "An overall score with breakdown across key dimensions",
+  },
+] as const;
+
+const MINI_STATS = [
+  { label: "Food Ideas Validated", value: "8,412", icon: CheckCircle, color: "text-green-500" },
+  { label: "Average Score", value: "72/100", icon: Target, color: "text-purple-500" },
+] as const;
+
 export default function ValidatePage() {
   const transform = useCallback(transformValidationResult, []);
 
@@ -104,13 +151,11 @@ export default function ValidatePage() {
   const start = useCallback(
     (input: { idea: string }) => {
       rawStart(input);
-      // Refresh usage after starting (will show updated count once complete)
       setTimeout(() => refreshUsage(), 2000);
     },
     [rawStart, refreshUsage]
   );
 
-  // Derive progressive results from completedStages for real-time display
   const progressiveResult = useMemo((): ValidationResult => {
     if (result) return result;
 
@@ -165,47 +210,146 @@ export default function ValidatePage() {
     progressiveResult.amazon ||
     progressiveResult.scores;
 
+  const showPreContent = !isRunning && !hasAnyResult;
+
   return (
-    <PageContainer>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-purple-600">
-          {isRunning ? "Validating Your Idea…" : "60-Second Reality Check"}
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Enter a business idea and get instant validation backed by real data.
-        </p>
-      </div>
-
-      {isAuthenticated && usage && (
-        <div className="mb-4 max-w-md">
-          <UsageMeter
-            used={usage.validate.used}
-            limit={usage.validate.limit}
-            label="Validations this month"
-          />
+    <main>
+      {/* Band 1: Purple Gradient Hero */}
+      <SectionBand
+        className="bg-gradient-to-b from-purple-600 via-purple-700 to-purple-900 text-white"
+        innerClassName="pt-10 pb-8 sm:pt-12 sm:pb-10"
+      >
+        <div className="flex justify-center mb-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm backdrop-blur-sm">
+            <ShieldCheck className="h-4 w-4 text-yellow-300" />
+            <span>AI-powered food business validation</span>
+          </div>
         </div>
+
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            60-Second{" "}
+            <span className="text-yellow-300">Reality Check</span>
+          </h1>
+          <p className="mt-3 max-w-2xl text-base text-purple-100 sm:text-lg">
+            Enter your food business idea and get instant validation backed by real
+            search data, trend analysis, and competitor intelligence.
+          </p>
+        </div>
+      </SectionBand>
+
+      {/* Band 2: Form Section */}
+      <SectionBand innerClassName="py-8">
+        {isAuthenticated && usage && (
+          <div className="mb-4 max-w-md">
+            <UsageMeter
+              used={usage.validate.used}
+              limit={usage.validate.limit}
+              label="Validations this month"
+            />
+          </div>
+        )}
+
+        {errorType === "auth_required" && (
+          <div className="mb-6 max-w-md">
+            <UpgradePrompt feature="validate ideas" type="auth_required" />
+          </div>
+        )}
+
+        {errorType === "usage_limit" && (
+          <div className="mb-6 max-w-md">
+            <UpgradePrompt feature="Unlimited validations" requiredTier="PRO" type="usage_limit" />
+          </div>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Lightbulb className="h-5 w-5 text-yellow-500" />
+              {isRunning ? "Validating Your Idea…" : "Describe Your Idea"}
+            </CardTitle>
+            <CardDescription>
+              Tell us about your food business concept and we&apos;ll analyze it against real market data
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <IdeaInputForm
+              onSubmit={(idea) => start({ idea })}
+              isRunning={isRunning}
+              onCancel={cancel}
+            />
+          </CardContent>
+        </Card>
+      </SectionBand>
+
+      {/* Pre-content: shown only when idle */}
+      {showPreContent && (
+        <>
+          {/* Band 3: How It Works */}
+          <SectionBand className="bg-muted" innerClassName="py-10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+              {HOW_IT_WORKS.map((s) => (
+                <div key={s.step} className="flex flex-col items-center">
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-purple-700 font-bold text-sm">
+                    {s.step}
+                  </div>
+                  <s.icon className="h-5 w-5 text-purple-600 mb-2" />
+                  <h3 className="font-medium text-sm">{s.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </SectionBand>
+
+          {/* Band 4: What You'll Get */}
+          <SectionBand innerClassName="py-10">
+            <h2 className="text-center text-lg font-semibold mb-6">What You&apos;ll Get</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {FEATURES.map((f) => (
+                <div key={f.title} className="rounded-xl border bg-card p-5 text-center">
+                  <div className={`mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${f.bg}`}>
+                    <f.icon className={`h-5 w-5 ${f.color}`} />
+                  </div>
+                  <h3 className="font-medium text-sm">{f.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1.5">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+          </SectionBand>
+
+          {/* Band 5: Stats + Social Proof */}
+          <SectionBand className="bg-muted" innerClassName="py-10">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              <div className="md:col-span-3">
+                <h2 className="font-semibold mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  Recent Validations
+                </h2>
+                <LiveFeed />
+              </div>
+              <div className="md:col-span-2 space-y-4">
+                <h2 className="font-semibold mb-3 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-purple-600" />
+                  Platform Stats
+                </h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {MINI_STATS.map((s) => (
+                    <div key={s.label} className="rounded-lg border bg-card p-3 text-center">
+                      <s.icon className={`mx-auto mb-1 h-4 w-4 ${s.color}`} />
+                      <p className="text-lg font-bold">{s.value}</p>
+                      <p className="text-xs text-muted-foreground">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </SectionBand>
+        </>
       )}
 
-      {errorType === "auth_required" && (
-        <div className="mb-6 max-w-md">
-          <UpgradePrompt feature="validate ideas" type="auth_required" />
-        </div>
-      )}
-
-      {errorType === "usage_limit" && (
-        <div className="mb-6 max-w-md">
-          <UpgradePrompt feature="Unlimited validations" requiredTier="PRO" type="usage_limit" />
-        </div>
-      )}
-
-      <IdeaInputForm
-        onSubmit={(idea) => start({ idea })}
-        isRunning={isRunning}
-        onCancel={cancel}
-      />
-
+      {/* Running state */}
       {isRunning && (
-        <div className="mt-6">
+        <SectionBand innerClassName="py-8">
           <PipelineProgress
             stages={stages}
             currentStage={currentStage}
@@ -214,11 +358,12 @@ export default function ValidatePage() {
             stageMessage={stageMessage}
             progress={progress}
           />
-        </div>
+        </SectionBand>
       )}
 
+      {/* Results */}
       {hasAnyResult && (
-        <div className="mt-8">
+        <SectionBand innerClassName="py-8">
           <ValidationDashboard
             keywords={progressiveResult.keywords}
             metrics={progressiveResult.metrics}
@@ -229,8 +374,8 @@ export default function ValidatePage() {
             scores={progressiveResult.scores}
             warnings={stageWarnings}
           />
-        </div>
+        </SectionBand>
       )}
-    </PageContainer>
+    </main>
   );
 }

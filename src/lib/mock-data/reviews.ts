@@ -5,21 +5,21 @@ export function getCustomerReviews(): CustomerReview[] {
     {
       id: "rev_1",
       name: "Marcus Johnson",
-      role: "Aspiring Food Entrepreneur",
+      role: "Aspiring Food Truck Owner",
       rating: 5,
       reviewText:
-        "I had a dozen food truck business ideas but no clue which one would actually work. Market-Fit Engine showed me that gourmet grilled cheese had 3x the search demand of my other concepts with half the competition. Launched two months ago and already profitable.",
+        "I had a dozen food truck ideas but no clue which one would actually work. FoodLaunch showed me that gourmet grilled cheese had 3x the search demand of my other concepts with half the competition. Launched two months ago and already profitable.",
       category: "Food Truck Ideas",
       avatarColor: "#f59e0b",
     },
     {
       id: "rev_2",
       name: "Elena Vasquez",
-      role: "First-Time Founder",
+      role: "First-Time Restaurant Founder",
       rating: 5,
       reviewText:
-        "I was drowning in generic startup ideas lists online. This tool gave me real data on what people are actually searching for. My AI-powered resume builder scored 87/100 and the competitor analysis revealed a gap nobody else was filling. Just closed our pre-seed round.",
-      category: "Startup Ideas",
+        "I was drowning in restaurant concepts and had no idea which cuisine would actually work in my neighborhood. FoodLaunch gave me real data — my vegan fast-casual concept scored 87/100 and the competitor analysis revealed a gap nobody else was filling. Opening next month.",
+      category: "Restaurant Ideas",
       avatarColor: "#3b82f6",
     },
     {
@@ -35,51 +35,51 @@ export function getCustomerReviews(): CustomerReview[] {
     {
       id: "rev_4",
       name: "Sarah Mitchell",
-      role: "Digital Nomad & Solopreneur",
+      role: "Ghost Kitchen Entrepreneur",
       rating: 5,
       reviewText:
-        "I've tried every online business ideas generator out there. This is the only one backed by real Google search data instead of just vibes. Found a niche in digital planner templates that has 8K monthly searches and almost zero quality competitors.",
-      category: "Online Business Ideas",
+        "I was torn between launching a poke bowl brand or a comfort food delivery concept from my ghost kitchen. FoodLaunch showed the poke bowl market was oversaturated locally, but late-night comfort food had massive unmet demand. Now doing 200+ orders a week.",
+      category: "Ghost Kitchen Ideas",
       avatarColor: "#a855f7",
     },
     {
       id: "rev_5",
       name: "James Okafor",
-      role: "Full-Time Employee & Side Hustler",
+      role: "Weekend Baker & Side Hustler",
       rating: 4,
       reviewText:
-        "Needed a side hustle idea that I could run in evenings and weekends. The tool ranked my options by time-to-revenue and competition level. My weekend car detailing service scored high on local demand — now earning $2K/month on the side after just six weeks.",
-      category: "Side Hustle Ideas",
+        "Needed a food business I could run on weekends. FoodLaunch ranked my options by time-to-revenue and competition level. My artisan sourdough subscription scored high on local demand — now earning $3K/month baking on weekends after just six weeks.",
+      category: "Bakery Ideas",
       avatarColor: "#06b6d4",
     },
     {
       id: "rev_6",
       name: "Lisa Chen",
-      role: "E-Commerce Store Owner",
+      role: "Packaged Food Entrepreneur",
       rating: 5,
       reviewText:
-        "Was stuck choosing between 5 different e-commerce ideas for my next store. The monetization scoring showed that sustainable pet products had the best margins and search trends. My Shopify store hit $10K in month two thanks to the niche validation.",
-      category: "E-Commerce Ideas",
+        "Was stuck choosing between 5 different food product ideas for my DTC brand. The monetization scoring showed that artisan hot sauce had the best margins and search trends. My Shopify store hit $10K in month two thanks to the niche validation.",
+      category: "Food Product Ideas",
       avatarColor: "#ec4899",
     },
     {
       id: "rev_7",
       name: "Raj Patel",
-      role: "Technical Co-Founder",
+      role: "Catering Business Founder",
       rating: 5,
       reviewText:
-        "We were debating between three SaaS startup ideas for months. Market-Fit Engine settled it in 60 seconds — our invoice automation concept had a demand score of 91 and the competitive landscape was surprisingly thin. We shipped our MVP in eight weeks.",
-      category: "SaaS Startup Ideas",
+        "We were debating between corporate lunch catering and private chef experiences. FoodLaunch settled it in 60 seconds — the private chef concept had a demand score of 91 and the competitive landscape was surprisingly thin. Booked out for the next 3 months.",
+      category: "Catering Ideas",
       avatarColor: "#8b5cf6",
     },
     {
       id: "rev_8",
       name: "Amanda Torres",
-      role: "Creative Entrepreneur",
+      role: "Beverage Brand Creator",
       rating: 5,
       reviewText:
-        "The subscription box ideas space felt saturated until I used this tool. It identified an underserved niche — curated journaling and stationery boxes for teens. The search trend was growing 30% quarter-over-quarter and the top competitors had weak SEO. Already at 400 subscribers.",
-      category: "Subscription Box Ideas",
+        "The craft beverage space felt saturated until I used FoodLaunch. It identified an underserved niche — functional mushroom coffee blends. The search trend was growing 30% quarter-over-quarter and top competitors had weak branding. Already in 40 retail stores.",
+      category: "Beverage Brand Ideas",
       avatarColor: "#ef4444",
     },
   ];

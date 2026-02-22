@@ -5,7 +5,7 @@ import type { SeedKeyword } from "@/lib/dataforseo/keyword-suggestions";
 
 const GENERATE_IDEAS_TOOL = {
   name: "generate_ideas" as const,
-  description: "Generates 50 localized business ideas for a category and location.",
+  description: "Generates 50 localized food business ideas for a category and location.",
   input_schema: {
     type: "object" as const,
     properties: {
@@ -115,7 +115,7 @@ export async function generateIdeas(
     messages: [
       {
         role: "user",
-        content: `Generate exactly 50 unique, specific business ideas in the "${category}" category for ${location}.${filterConstraints}${seedContext}
+        content: `Generate exactly 50 unique, specific food business ideas in the "${category}" category for ${location}.${filterConstraints}${seedContext}
 
 Requirements:
 - Each idea must address a SPECIFIC pain point that exists in ${location}

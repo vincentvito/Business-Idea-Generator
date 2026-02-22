@@ -73,8 +73,8 @@ function transformEnrichResult(events: PipelineEvent[]): EnrichResult {
 const stages = DISCOVERY_STAGES.map((s) => ({ id: s.id, label: s.label }));
 
 const HOW_IT_WORKS = [
-  { step: 1, icon: Compass, title: "Pick Category & Location", desc: "Choose from 20+ business categories and your target market" },
-  { step: 2, icon: Sparkles, title: "AI Generates 50 Ideas", desc: "Each idea validated with real Google search data" },
+  { step: 1, icon: Compass, title: "Pick Food Type & Location", desc: "Choose from 12 food & beverage categories and your target market" },
+  { step: 2, icon: Sparkles, title: "AI Generates 50 Ideas", desc: "Each food business idea validated with real Google search data" },
   { step: 3, icon: Trophy, title: "Find Golden Opportunities", desc: "Ranked by demand, competition & profit potential" },
 ] as const;
 
@@ -83,27 +83,27 @@ const FEATURES = [
     icon: Lightbulb,
     color: "text-yellow-500",
     bg: "bg-yellow-50",
-    title: "50 Business Ideas",
-    desc: "AI-generated ideas tailored to your category, location, and preferences",
+    title: "50 Food Business Ideas",
+    desc: "AI-generated food & beverage ideas tailored to your category, location, and preferences",
   },
   {
     icon: BarChart3,
     color: "text-blue-500",
     bg: "bg-blue-50",
     title: "Real Market Data",
-    desc: "Each idea validated with actual Google search volume and competition metrics",
+    desc: "Each idea validated with actual Google search volume and local competition metrics",
   },
   {
     icon: Star,
     color: "text-purple-500",
     bg: "bg-purple-50",
     title: "Golden Opportunities",
-    desc: "Top ideas highlighted with high demand, low competition, and strong monetization",
+    desc: "Top food ideas highlighted with high demand, low competition, and strong margins",
   },
 ] as const;
 
 const MINI_STATS = [
-  { label: "Ideas Generated", value: "12,847", icon: Lightbulb, color: "text-yellow-500" },
+  { label: "Food Ideas Generated", value: "12,847", icon: Lightbulb, color: "text-yellow-500" },
   { label: "Golden Finds", value: "2,340", icon: Star, color: "text-purple-500" },
 ] as const;
 
@@ -200,18 +200,19 @@ export default function DiscoverPage() {
         <div className="flex justify-center mb-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm backdrop-blur-sm">
             <Sparkles className="h-4 w-4 text-yellow-300" />
-            <span>AI-powered idea discovery</span>
+            <span>AI-powered food business discovery</span>
           </div>
         </div>
 
         <div className="flex flex-col items-center text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Discover Your Next{" "}
-            <span className="text-yellow-300">Business Idea</span>
+            <span className="text-yellow-300">Food Business</span>
           </h1>
           <p className="mt-3 max-w-2xl text-base text-purple-100 sm:text-lg">
-            Pick a category and location. Our AI generates 50 ideas, validates
-            them with real search data, and highlights the golden opportunities.
+            Pick a food category and location. Our AI generates 50 food &
+            beverage ideas, validates them with real market data, and highlights
+            the golden opportunities.
           </p>
         </div>
       </SectionBand>
@@ -247,7 +248,7 @@ export default function DiscoverPage() {
               Configure Your Search
             </CardTitle>
             <CardDescription>
-              Choose a business category and target market location to get started
+              Choose a food business type and target market location to get started
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -22,10 +22,10 @@ const NAV_LINKS = [
 ];
 
 const EXPLORE_LINKS = [
-  { href: "/top", label: "Top Ideas", description: "Highest-scoring validated ideas" },
-  { href: "/trending", label: "Trending", description: "Rising niches & search trends" },
-  { href: "/categories", label: "Categories", description: "Browse by business category" },
-  { href: "/success-stories", label: "Success Stories", description: "Ideas that became businesses" },
+  { href: "/top", label: "Top Ideas", description: "Highest-scoring validated food ideas" },
+  { href: "/trending", label: "Trending", description: "Rising food & beverage trends" },
+  { href: "/categories", label: "Categories", description: "Browse food business types" },
+  { href: "/success-stories", label: "Success Stories", description: "Food ideas that became businesses" },
 ];
 
 const ALL_LINKS = [...NAV_LINKS, ...EXPLORE_LINKS, { href: "/bookmarks", label: "Bookmarks" }];
@@ -39,7 +39,7 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-5xl items-center px-4">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <Zap className="h-5 w-5 text-primary" />
-          <span>Market-Fit Engine</span>
+          <span>FoodLaunch</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -112,7 +112,7 @@ export function Header() {
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
                   <Zap className="h-4 w-4 text-primary" />
-                  Menu
+                  FoodLaunch
                 </SheetTitle>
               </SheetHeader>
               <nav className="mt-4 flex flex-col gap-1">

@@ -29,7 +29,7 @@ export function NewsletterSignup() {
           <CheckCircle2 className="h-8 w-8 text-green-500" />
           <p className="font-medium">You&apos;re subscribed!</p>
           <p className="text-sm text-muted-foreground">
-            We&apos;ll send you the best business ideas weekly.
+            We&apos;ll send you the best food business ideas weekly.
           </p>
         </div>
       ) : (

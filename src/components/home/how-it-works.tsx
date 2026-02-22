@@ -3,14 +3,14 @@ import { Compass, Sparkles, Target } from "lucide-react";
 const steps = [
   {
     icon: Compass,
-    title: "Pick a Category",
-    description: "Choose from 20+ business categories and set your target location.",
+    title: "Pick a Food Category",
+    description: "Choose from 12 food & beverage categories and set your target location.",
     step: 1,
   },
   {
     icon: Sparkles,
     title: "AI Generates 50 Ideas",
-    description: "Our engine researches real search data and creates data-backed opportunities.",
+    description: "Our engine researches real search data and creates data-backed food business opportunities.",
     step: 2,
   },
   {

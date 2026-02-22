@@ -4,15 +4,15 @@ import { getCategoryStats } from "@/lib/mock-data";
 import { CATEGORY_ICONS } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dumbbell, UtensilsCrossed, ShoppingCart, Code, GraduationCap,
-  Heart, Building2, Wallet, Plane, Sparkles, PawPrint, Wrench,
-  Leaf, Film, Baby, Briefcase, Car, Shirt, Wheat, HandHeart,
+  UtensilsCrossed, Truck, CakeSlice, PartyPopper, ChefHat,
+  Wine, Coffee, Package, GlassWater, ShoppingBasket, Monitor, Store,
+  Briefcase,
 } from "lucide-react";
 
 const iconComponents: Record<string, React.ComponentType<{ className?: string }>> = {
-  Dumbbell, UtensilsCrossed, ShoppingCart, Code, GraduationCap,
-  Heart, Building2, Wallet, Plane, Sparkles, PawPrint, Wrench,
-  Leaf, Film, Baby, Briefcase, Car, Shirt, Wheat, HandHeart,
+  UtensilsCrossed, Truck, CakeSlice, PartyPopper, ChefHat,
+  Wine, Coffee, Package, GlassWater, ShoppingBasket, Monitor, Store,
+  Briefcase,
 };
 
 export default function CategoriesPage() {
@@ -21,9 +21,9 @@ export default function CategoriesPage() {
   return (
     <PageContainer>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">Browse Categories</h1>
+        <h1 className="text-2xl font-bold">Browse Food Business Categories</h1>
         <p className="text-muted-foreground mt-1">
-          Explore business opportunities across {categories.length} categories.
+          Explore opportunities across {categories.length} food & beverage categories.
         </p>
       </div>
 

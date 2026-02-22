@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   if (!idea || typeof idea !== "string" || idea.length < 10) {
     return new Response(
-      JSON.stringify({ error: "Please provide a business idea (at least 10 characters)" }),
+      JSON.stringify({ error: "Please provide a food business idea (at least 10 characters)" }),
       { status: 400, headers: { "Content-Type": "application/json" } }
     );
   }

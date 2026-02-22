@@ -57,7 +57,7 @@ export function CustomerReviews() {
         What Entrepreneurs Are Saying
       </h2>
       <p className="text-center text-sm text-muted-foreground mb-6">
-        Join thousands who validated their business ideas with real market data
+        Join thousands who validated their food business ideas with real market data
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         {reviews.map((review) => (

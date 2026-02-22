@@ -5,19 +5,20 @@ export const STATS_DATA = {
   ideasValidated: 12847,
   goldilocksFound: 2340,
   avgScore: 67,
-  categoriesExplored: 20,
+  categoriesExplored: 12,
 };
 
 const FEED_ADJECTIVES = [
-  "AI-powered", "sustainable", "on-demand", "subscription-based",
-  "hyperlocal", "mobile-first", "B2B", "marketplace",
-  "premium", "automated", "community-driven", "niche",
+  "farm-to-table", "artisan", "organic", "delivery-first",
+  "plant-based", "locally-sourced", "ghost kitchen", "meal-prep",
+  "gluten-free", "craft", "gourmet", "seasonal",
 ];
 
 export function getLiveFeedItems() {
   const pool = getIdeasPool();
-  // Pick every 5th idea to get variety across all score ranges
-  const spread = Array.from({ length: 20 }, (_, i) => pool[i * 5]);
+  // Pick every 4th idea to get variety across all score ranges
+  const step = Math.max(1, Math.floor(pool.length / 20));
+  const spread = Array.from({ length: Math.min(20, pool.length) }, (_, i) => pool[i * step]).filter(Boolean);
   return spread.map((idea, i) => ({
     idea: idea.title,
     score: idea.overallScore,
@@ -41,18 +42,18 @@ export const TRUST_SIGNALS = [
   },
   {
     icon: "Brain" as const,
-    title: "AI-Powered Analysis",
-    description: "Claude AI for deep competitive insights",
+    title: "Food Industry AI",
+    description: "Claude AI tuned for food & beverage analysis",
   },
   {
     icon: "Shield" as const,
     title: "Data-Driven Scores",
-    description: "Quantified demand, competition & monetization",
+    description: "Quantified demand, competition & food market fit",
   },
   {
     icon: "Zap" as const,
     title: "60-Second Results",
-    description: "Full validation pipeline in under a minute",
+    description: "Full food business validation in under a minute",
   },
 ];
 

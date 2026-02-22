@@ -24,7 +24,7 @@ export function IdeaInputForm({ onSubmit, isRunning, onCancel }: IdeaInputFormPr
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="idea" className="text-sm font-medium text-muted-foreground">
-          Describe your business idea
+          Describe your food business idea
         </label>
         <textarea
           id="idea"

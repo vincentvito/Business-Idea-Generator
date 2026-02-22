@@ -4,26 +4,18 @@ import { hash, seededRange } from "./helpers";
 import type { CategoryStats } from "@/types/trending";
 
 const TOP_NICHES: Record<string, string> = {
-  "Fitness & Wellness": "AI Personal Training",
-  "Food & Beverage": "Meal Kit Delivery",
-  "E-commerce & Retail": "Niche DTC Brands",
-  "SaaS & Software": "AI-Powered Micro-SaaS",
-  "Education & Training": "Online Cohort Courses",
-  "Health & Medical": "Telehealth Platforms",
-  "Real Estate": "PropTech Analytics",
-  "Finance & Fintech": "Embedded Finance",
-  "Travel & Hospitality": "Experience Marketplaces",
-  "Beauty & Personal Care": "Clean Beauty DTC",
-  "Pet Services": "Pet Health Tech",
-  "Home Services": "On-Demand Handyman",
-  "Sustainability & Green": "Carbon Offset Platforms",
-  "Entertainment & Media": "Creator Economy Tools",
-  "Childcare & Parenting": "EdTech for Toddlers",
-  "Professional Services": "AI Legal Assistants",
-  "Automotive": "EV Charging Networks",
-  "Fashion & Apparel": "Sustainable Fashion Rental",
-  "Agriculture & Food Tech": "Vertical Farming",
-  "Social Impact": "Impact Investing Tools",
+  "Restaurant & Dining": "Plant-Based Fine Dining",
+  "Food Truck & Street Food": "Gourmet Fusion Trucks",
+  "Bakery & Pastry": "Sourdough Micro-Bakeries",
+  "Catering & Events": "Private Chef Experiences",
+  "Ghost Kitchen & Delivery-Only": "Multi-Brand Virtual Kitchens",
+  "Bar, Pub & Nightlife": "Zero-Alcohol Cocktail Bars",
+  "Café & Coffee Shop": "Specialty Coffee & Coworking",
+  "Meal Prep & Subscription": "Keto & Macro Meal Plans",
+  "Beverage Brand": "Functional Mushroom Drinks",
+  "Food Product & Packaged Goods": "Artisan Hot Sauce Lines",
+  "Food Tech & SaaS": "AI Kitchen Management",
+  "Grocery & Specialty Retail": "Zero-Waste Grocery Stores",
 };
 
 export function getCategoryStats(): CategoryStats[] {

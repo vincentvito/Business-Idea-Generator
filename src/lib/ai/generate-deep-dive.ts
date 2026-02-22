@@ -364,7 +364,7 @@ async function generateDevilsAdvocate(
     messages: [
       {
         role: "user",
-        content: `Tear apart this business idea. Find every risk, failure mode, and challenge. Be brutally honest.\n\n${context}\n\nProvide at least 5 critical risks with severity/likelihood ratings, 3+ failure modes, and separate market/execution/financial challenges. End with a no-BS honest assessment paragraph.`,
+        content: `Tear apart this food business idea. Find every risk, failure mode, and challenge. Be brutally honest.\n\n${context}\n\nProvide at least 5 critical risks with severity/likelihood ratings, 3+ failure modes, and separate market/execution/financial challenges. End with a no-BS honest assessment paragraph.`,
       },
     ],
   });

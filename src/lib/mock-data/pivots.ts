@@ -28,7 +28,7 @@ export function getPivotSuggestions(ideaTitle: string, currentScore: number): Pi
       pivotOneLiner: `Pivot the core concept ${strategy.suffix.toLowerCase()} to capture a more profitable segment`,
       pivotReason: strategy.reason,
       estimatedScore: Math.min(95, currentScore + scoreBoost),
-      category: "SaaS & Software",
+      category: "Restaurant & Dining",
     });
   }
 

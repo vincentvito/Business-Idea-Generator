@@ -49,7 +49,7 @@ export function ShareCardModal({ open, onOpenChange, idea }: ShareCardModalProps
             <Badge variant="outline">{idea.category}</Badge>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Zap className="h-3 w-3" />
-              Market-Fit Engine
+              FoodLaunch
             </div>
           </div>
 

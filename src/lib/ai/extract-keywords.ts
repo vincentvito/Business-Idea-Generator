@@ -5,7 +5,7 @@ import type { KeywordExtractionResult } from "@/types/validation";
 const EXTRACTION_TOOL = {
   name: "extract_keywords" as const,
   description:
-    "Extracts the most valuable search keywords from a business idea description.",
+    "Extracts the most valuable search keywords from a food business idea description.",
   input_schema: {
     type: "object" as const,
     properties: {
@@ -30,7 +30,7 @@ const EXTRACTION_TOOL = {
             },
             relevance: {
               type: "number",
-              description: "Relevance score 0-100 to the original business idea",
+              description: "Relevance score 0-100 to the original food business idea",
             },
           },
           required: ["keyword", "intent", "relevance"],
@@ -46,7 +46,7 @@ const EXTRACTION_TOOL = {
       category: {
         type: "string",
         description:
-          "Business category (e.g., Food & Beverage, SaaS, Fitness)",
+          "Food business category (e.g., Restaurant & Dining, Food Truck, Bakery, Ghost Kitchen)",
       },
     },
     required: ["keywords", "niche", "location", "category"],
@@ -67,11 +67,11 @@ export async function extractKeywords(
     messages: [
       {
         role: "user",
-        content: `Analyze this business idea and extract the most commercially valuable search keywords that potential customers would use. Consider both the product/service AND the location. Include long-tail keywords, competitor brand-adjacent terms, and problem-aware queries.
+        content: `Analyze this food business idea and extract the most commercially valuable search keywords that potential customers would use. Consider both the food concept AND the location. Include long-tail keywords, competitor brand-adjacent terms, and problem-aware queries.
 
-Business idea: "${ideaText}"
+Food business idea: "${ideaText}"
 
-Extract 8-15 keywords ordered by expected commercial value (highest first). For each keyword, classify the search intent and rate relevance to the core business idea.`,
+Extract 8-15 keywords ordered by expected commercial value (highest first). For each keyword, classify the search intent and rate food business relevance.`,
       },
     ],
   });

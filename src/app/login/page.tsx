@@ -72,7 +72,7 @@ function LoginContent() {
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <Zap className="h-5 w-5 text-primary" />
               </div>
-              <CardTitle>Sign in to Market-Fit Engine</CardTitle>
+              <CardTitle>Sign in to FoodLaunch</CardTitle>
               <CardDescription>
                 Enter your email to receive a magic link
               </CardDescription>

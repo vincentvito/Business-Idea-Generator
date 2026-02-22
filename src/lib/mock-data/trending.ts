@@ -3,23 +3,24 @@ import { hash, seededRange, pickRandom } from "./helpers";
 import type { TrendingNiche } from "@/types/trending";
 
 const NICHE_NAMES: string[] = [
-  "AI Personal Assistants", "Sustainable Packaging", "Remote Work Tools",
-  "Plant-Based Proteins", "Home Fitness Equipment", "Electric Vehicle Charging",
-  "Mental Health Apps", "Pet Tech", "Micro-SaaS", "Creator Economy Tools",
-  "Senior Care Tech", "Urban Farming", "Subscription Commerce", "Voice AI",
-  "Cybersecurity for SMBs", "Edtech for Adults", "Green Energy Consulting",
-  "Telehealth Platforms", "Niche Communities", "AI Content Creation",
-  "Smart Home Automation", "Meal Kit Delivery", "Digital Nomad Services",
-  "Blockchain for Supply Chain", "Wellness Retreats", "Kids EdTech",
-  "B2B Payments", "Climate Tech", "Personalized Nutrition", "Local Marketplaces",
-  "AR/VR Experiences", "Drone Services", "Freelance Platforms",
-  "Sleep Technology", "Food Waste Reduction",
+  "Ghost Kitchen Concepts", "Plant-Based Fast Casual", "Meal Prep Delivery",
+  "Artisan Bakery Subscriptions", "Specialty Coffee Roasting", "Food Truck Catering",
+  "Farm-to-Table Dining", "Craft Cocktail Bars", "Vegan Comfort Food",
+  "Ethnic Fusion Restaurants", "Healthy Snack Brands", "Cold Brew & Kombucha",
+  "Food Waste Reduction Tech", "Cloud Kitchen Software", "Gourmet Meal Kits",
+  "Late-Night Delivery Concepts", "Pet Food & Treats", "Functional Beverages",
+  "Pop-Up Restaurant Events", "Smart Kitchen Tech", "Protein Snack Brands",
+  "Bubble Tea & Boba Shops", "Food Hall Concepts", "Sustainable Packaging Foods",
+  "Micro-Bakery & Cottage Food", "Private Chef Services", "Food Tour Experiences",
+  "Fermented Foods & Probiotics", "Restaurant POS & Tech", "Specialty Grocery Retail",
+  "Ice Cream & Gelato Shops", "Catering for Corporate Events", "Dark Store Grocery",
+  "Kids Meal Subscription", "Hot Sauce & Condiment Brands",
 ];
 
 const RELATED_KEYWORDS_POOL = [
-  "best tools 2025", "market size", "startups", "trends",
-  "growth rate", "investment", "opportunities", "platform",
-  "software", "apps", "services", "solutions",
+  "near me", "market size", "startup costs", "trends",
+  "growth rate", "franchise", "opportunities", "delivery",
+  "menu ideas", "recipes", "suppliers", "equipment",
 ];
 
 export function getTrendingNiches(): TrendingNiche[] {

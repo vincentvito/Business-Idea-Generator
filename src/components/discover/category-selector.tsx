@@ -113,7 +113,7 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="category" className="text-sm font-medium text-muted-foreground">
-            Category
+            Food Business Type
           </label>
           <select
             id="category"
@@ -122,7 +122,7 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
             disabled={isRunning}
             className={selectClass}
           >
-            <option value="">Select a category...</option>
+            <option value="">Select a food business type...</option>
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -187,7 +187,7 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
               id="founderSkills"
               value={founderSkills}
               onChange={(e) => setFounderSkills(e.target.value)}
-              placeholder="e.g., developer, marketer, designer"
+              placeholder="e.g., chef, baker, food marketing, operations"
               disabled={isRunning}
               className="mt-1.5"
             />
