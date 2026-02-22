@@ -31,6 +31,7 @@ import {
   Megaphone,
   Palette,
   Swords,
+  AlertTriangle,
 } from "lucide-react";
 import type { PipelineEvent } from "@/types/pipeline";
 import type { RankedIdea, DiscoveryFilters } from "@/types/discovery";
@@ -221,6 +222,11 @@ export default function DiscoverPage() {
   };
 
   const showPreContent = !discovery.isRunning && !discovery.result;
+  const hasGenericError = !!(
+    discovery.error &&
+    discovery.errorType !== "auth_required" &&
+    discovery.errorType !== "usage_limit"
+  );
 
   return (
     <main>
@@ -291,6 +297,27 @@ export default function DiscoverPage() {
             />
           </CardContent>
         </Card>
+
+        {hasGenericError && (
+          <Card className="mt-4 border-destructive/50 bg-destructive/5">
+            <CardContent className="flex items-start gap-3 py-4">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="h-4 w-4 text-destructive" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-medium text-sm text-destructive">
+                  Something went wrong
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {discovery.error}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Please check your inputs and try again. If the problem persists, the service may be temporarily unavailable.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </SectionBand>
 
       {/* Pre-content: shown only when idle (no running/results) */}

@@ -98,14 +98,14 @@ export default function HomePage() {
         </div>
       </SectionBand>
 
-      {/* Band 3: How It Works (gray) */}
+      {/* Band 3: Data Sources / Powered By (gray) */}
       <SectionBand className="bg-muted" innerClassName="py-12">
-        <HowItWorks />
+        <DataSources />
       </SectionBand>
 
-      {/* Band 4: Data Sources / Powered By (white) */}
+      {/* Band 4: How It Works (white) */}
       <SectionBand innerClassName="py-12">
-        <DataSources />
+        <HowItWorks />
       </SectionBand>
 
       {/* Band 5: Idea of the Day (gray) */}
