@@ -10,7 +10,9 @@ import { UsageMeter } from "@/components/paywall/usage-meter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreditCard, ExternalLink, User, BarChart3 } from "lucide-react";
+import { CreditCard, ExternalLink, User, BarChart3, Info } from "lucide-react";
+
+const isBypass = process.env.NEXT_PUBLIC_BYPASS_AUTH === "true";
 
 const tierColors: Record<string, string> = {
   FREE: "bg-muted text-muted-foreground",
@@ -93,7 +95,12 @@ export default function AccountPage() {
             <CardTitle className="text-base">Subscription</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {tier === "FREE" ? (
+            {isBypass ? (
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Info className="h-4 w-4 mt-0.5 shrink-0" />
+                <span>Dev bypass mode — billing is disabled. All PRO features are unlocked.</span>
+              </div>
+            ) : tier === "FREE" ? (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   You&apos;re on the free plan. Upgrade for unlimited access.

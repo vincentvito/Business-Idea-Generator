@@ -3,6 +3,16 @@ import { prisma } from "@/lib/db/prisma";
 import { stripe } from "@/lib/stripe/client";
 
 export async function POST() {
+  if (
+    process.env.BYPASS_AUTH === "true" ||
+    process.env.NEXT_PUBLIC_BYPASS_AUTH === "true"
+  ) {
+    return Response.json(
+      { error: "Billing portal is not available in dev bypass mode" },
+      { status: 400 }
+    );
+  }
+
   const session = await auth();
   if (!session?.user?.id) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

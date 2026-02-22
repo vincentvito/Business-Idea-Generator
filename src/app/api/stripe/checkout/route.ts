@@ -4,6 +4,16 @@ import { stripe } from "@/lib/stripe/client";
 import { getPriceId } from "@/lib/stripe/plans";
 
 export async function POST(request: Request) {
+  if (
+    process.env.BYPASS_AUTH === "true" ||
+    process.env.NEXT_PUBLIC_BYPASS_AUTH === "true"
+  ) {
+    return Response.json(
+      { error: "Stripe checkout is not available in dev bypass mode" },
+      { status: 400 }
+    );
+  }
+
   const session = await auth();
   if (!session?.user?.id || !session.user.email) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
