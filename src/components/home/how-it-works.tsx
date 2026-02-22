@@ -23,7 +23,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <div className="my-12">
+    <div>
       <h2 className="text-center text-lg font-semibold mb-6">How It Works</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {steps.map((step) => (

@@ -23,7 +23,7 @@ export function NewsletterSignup() {
   };
 
   return (
-    <div className="my-12 rounded-lg border bg-card p-6 text-center">
+    <div className="mt-8 text-center">
       {submitted ? (
         <div className="flex flex-col items-center gap-2 py-2">
           <CheckCircle2 className="h-8 w-8 text-green-500" />

@@ -10,7 +10,7 @@ const stats = [
 
 export function StatsBanner() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {stats.map((stat) => (
         <div
           key={stat.label}

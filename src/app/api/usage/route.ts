@@ -3,6 +3,15 @@ import { prisma } from "@/lib/db/prisma";
 import { TIER_LIMITS, type TierName } from "@/lib/auth/tier-limits";
 
 export async function GET() {
+  if (process.env.BYPASS_AUTH === "true") {
+    return Response.json({
+      tier: "PRO",
+      validate: { used: 0, limit: Infinity },
+      discover: { used: 0, limit: Infinity },
+      enrich: { used: 0, limit: Infinity },
+    });
+  }
+
   const session = await auth();
 
   if (!session?.user?.id) {

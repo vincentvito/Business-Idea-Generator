@@ -19,7 +19,7 @@ export function SurpriseMe() {
   };
 
   return (
-    <div className="my-8 text-center">
+    <div className="mt-6 text-center">
       <Button onClick={handleSurprise} variant="outline" size="lg" className="gap-2">
         <Shuffle className="h-4 w-4" />
         Surprise Me with a Random Idea
