@@ -6,7 +6,6 @@ import type { PipelineEvent } from "@/types/pipeline";
 import type { KeywordMetrics } from "@/types/validation";
 import type { IdeaStub, RankedIdea, DiscoveryFilters } from "@/types/discovery";
 
-const MIN_VOLUME = 100;
 
 export async function runDiscoveryPipeline(
   category: string,
@@ -70,8 +69,7 @@ export async function runDiscoveryPipeline(
     message: "Finding Goldilocks opportunities...",
   });
 
-  const allRanked = rankIdeas(allIdeas, metricsMap);
-  const rankedIdeas = allRanked.filter((idea) => idea.totalVolume >= MIN_VOLUME);
+  const rankedIdeas = rankIdeas(allIdeas, metricsMap);
   const goldilocksIdeas = rankedIdeas.filter((idea) => idea.isGoldilocks);
 
   emit({

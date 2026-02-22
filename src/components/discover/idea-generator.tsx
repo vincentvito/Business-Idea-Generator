@@ -29,7 +29,6 @@ export function IdeaGenerator({
   dataSource,
   totalGenerated,
 }: IdeaGeneratorProps) {
-  const filtered = totalGenerated && totalGenerated > ideas.length;
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -37,11 +36,6 @@ export function IdeaGenerator({
           <h3 className="font-semibold">
             {ideas.length} Ideas Found
           </h3>
-          {filtered && (
-            <span className="text-sm text-muted-foreground">
-              from {totalGenerated} generated
-            </span>
-          )}
           {dataSource && (
             <Badge
               variant="outline"
