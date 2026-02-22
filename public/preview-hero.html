@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FoodLaunch — Full Landing Page Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #fff; color: #1f2937; }
+  a { text-decoration: none; color: inherit; }
+
+  /* ── Shared ── */
+  .band { width: 100%; }
+  .band-inner { max-width: 1024px; margin: 0 auto; padding: 0 16px; }
+  .band-white { background: #fff; }
+  .band-gray { background: #fafafa; }
+  .section-title { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .section-subtitle { text-align: center; font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+  .badge-outline {
+    display: inline-flex; align-items: center; border: 1px solid #e5e7eb; border-radius: 9999px;
+    padding: 2px 10px; font-size: 12px; font-weight: 500; color: #374151;
+  }
+  .badge-secondary {
+    display: inline-flex; align-items: center; background: #f3f4f6; border-radius: 9999px;
+    padding: 2px 10px; font-size: 12px; font-weight: 500; color: #374151;
+  }
+  .badge-purple {
+    display: inline-flex; align-items: center; gap: 6px; background: #faf5ff; border: 1px solid #e9d5ff;
+    border-radius: 9999px; padding: 6px 14px; font-size: 12px; font-weight: 500; color: #7c3aed;
+  }
+  .badge-purple svg { width: 14px; height: 14px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; background: #18181b; color: #fff;
+    padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; border: none; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: #27272a; }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #374151;
+    padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    border: 1px solid #e5e7eb; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-outline:hover { background: #f9fafb; }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 4px; background: transparent; color: #6b7280;
+    padding: 4px 8px; border-radius: 6px; font-size: 13px; font-weight: 500; border: none; cursor: pointer;
+  }
+  .btn-ghost:hover { background: #f3f4f6; }
+  .card {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;
+    transition: box-shadow 0.15s;
+  }
+  .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .muted { color: #6b7280; }
+  .small { font-size: 14px; }
+  .xs { font-size: 12px; }
+  .bold { font-weight: 700; }
+  .semibold { font-weight: 600; }
+  .medium { font-weight: 500; }
+  svg.icon-sm { width: 14px; height: 14px; }
+  svg.icon-md { width: 16px; height: 16px; }
+  svg.icon { width: 20px; height: 20px; }
+
+  /* ── Header ── */
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .header-inner {
+    max-width: 1024px; margin: 0 auto; padding: 0 16px;
+    display: flex; align-items: center; height: 56px;
+  }
+  .header-logo { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+  .header-logo svg { width: 20px; height: 20px; color: #18181b; }
+  .header-nav { margin-left: 32px; display: flex; align-items: center; gap: 4px; }
+  .header-nav a {
+    padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; color: #6b7280;
+    transition: background 0.15s;
+  }
+  .header-nav a:hover { background: #f3f4f6; color: #374151; }
+
+  /* ── Hero Band ── */
+  .hero {
+    width: 100%;
+    background: linear-gradient(to bottom, #9333ea, #7e22ce, #581c87);
+    color: #fff;
+    padding: 80px 16px 64px;
+  }
+  .hero-inner {
+    max-width: 1024px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(4px); border-radius: 9999px; padding: 6px 16px; font-size: 14px; margin-bottom: 24px;
+  }
+  .hero-badge svg { color: #fde047; }
+  .hero h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .hero h1 .accent { color: #fde047; }
+  .hero .subtitle { margin-top: 16px; font-size: 1.2rem; color: rgba(243,232,255,0.85); max-width: 520px; line-height: 1.6; }
+  .hero-cta {
+    margin-top: 32px; display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: #7c3aed; font-weight: 600; font-size: 16px;
+    padding: 12px 32px; border-radius: 10px; border: none; cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-decoration: none; transition: background 0.2s;
+  }
+  .hero-cta:hover { background: #faf5ff; }
+  .hero-cta svg { width: 20px; height: 20px; }
+
+  /* ── Hero image ── */
+  .hero-image-wrapper { position: relative; max-width: 448px; margin: 0 auto; }
+  .hero-image-card {
+    aspect-ratio: 4 / 3; border-radius: 16px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px); overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  }
+  .hero-image-inner {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(192,132,252,0.3), rgba(168,85,247,0.2), rgba(253,224,71,0.2));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-image-content { text-align: center; padding: 24px; }
+  .hero-image-icon {
+    width: 64px; height: 64px; margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 16px; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
+  }
+  .hero-image-icon svg { width: 32px; height: 32px; color: #fde047; }
+  .hero-image-text { color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500; }
+
+  /* ── Sticker tags ── */
+  .sticker {
+    position: absolute; display: flex; align-items: center; gap: 6px;
+    background: #fff; padding: 6px 12px; border-radius: 9999px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.08);
+    font-size: 13px; font-weight: 600; color: #1f2937; white-space: nowrap;
+    opacity: 0; animation: stickerIn 0.6s ease-out forwards;
+  }
+  .sticker svg { width: 14px; height: 14px; flex-shrink: 0; }
+  @keyframes stickerIn {
+    from { opacity: 0; transform: translateY(8px) var(--rotate); }
+    to   { opacity: 1; transform: translateY(0) var(--rotate); }
+  }
+  .sticker-idea   { top: 8px; left: -28px; --rotate: rotate(-3deg); animation-delay: 0ms; }
+  .sticker-idea svg { color: #eab308; }
+  .sticker-plan   { top: 52px; right: -36px; --rotate: rotate(4deg); animation-delay: 100ms; }
+  .sticker-plan svg { color: #a855f7; }
+  .sticker-mood   { bottom: 96px; left: -36px; --rotate: rotate(-5deg); animation-delay: 200ms; }
+  .sticker-mood svg { color: #ec4899; }
+  .sticker-menu   { bottom: 40px; right: -28px; --rotate: rotate(3deg); animation-delay: 300ms; }
+  .sticker-menu svg { color: #10b981; }
+  .sticker-name   { bottom: -14px; left: 33%; --rotate: rotate(-2deg); animation-delay: 400ms; }
+  .sticker-name svg { color: #3b82f6; }
+
+  /* ── Stats Banner ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .stat-card {
+    display: flex; align-items: center; gap: 12px;
+    border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; background: #fff;
+  }
+  .stat-card svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .stat-value { font-size: 18px; font-weight: 700; line-height: 1.2; }
+  .stat-label { font-size: 12px; color: #6b7280; }
+
+  /* ── Validate CTA box ── */
+  .validate-cta {
+    margin-top: 32px; border-radius: 12px; border: 2px solid #f3e8ff; background: rgba(250,245,255,0.5);
+    padding: 24px 32px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .validate-cta-left { display: flex; align-items: flex-start; gap: 16px; }
+  .validate-icon {
+    width: 48px; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    border-radius: 12px; background: #18181b; color: #fff;
+  }
+  .validate-icon svg { width: 24px; height: 24px; }
+
+  /* ── How It Works ── */
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .step { text-align: center; }
+  .step-number {
+    width: 48px; height: 48px; margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; background: #18181b; color: #fff; font-size: 18px; font-weight: 700;
+  }
+  .step-title { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+  .step-title svg { width: 16px; height: 16px; color: #6b7280; }
+  .step-title span { font-weight: 500; font-size: 15px; }
+  .step-desc { font-size: 14px; color: #6b7280; line-height: 1.5; }
+
+  /* ── Data Sources ── */
+  .pills-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 40px; }
+  .ds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .ds-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; background: #fff; transition: box-shadow 0.15s; }
+  .ds-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .ds-card.coming-soon { border-style: dashed; border-color: rgba(107,114,128,0.25); background: rgba(250,250,250,0.5); opacity: 0.75; position: relative; }
+  .ds-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .ds-icon { width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+  .ds-icon svg { width: 20px; height: 20px; }
+  .ds-name { font-size: 14px; font-weight: 600; }
+  .ds-provider {
+    display: inline-block; margin-top: 3px; border: 1px solid #e5e7eb; background: #fafafa;
+    border-radius: 9999px; padding: 1px 8px; font-size: 10px; font-weight: 500; color: #6b7280;
+  }
+  .ds-desc { font-size: 14px; color: #6b7280; line-height: 1.5; }
+  .ds-metric { font-size: 12px; font-weight: 600; color: #7c3aed; margin-top: 12px; display: flex; align-items: center; gap: 4px; }
+  .ds-metric svg { width: 12px; height: 12px; }
+  .ds-metric.muted-metric { color: #6b7280; }
+  .coming-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: #fef3c7; border: 1px solid #fcd34d; border-radius: 9999px;
+    padding: 2px 8px; font-size: 10px; font-weight: 600; color: #92400e;
+  }
+
+  /* ── Idea of the Day ── */
+  .iotd {
+    border: 2px solid rgba(24,24,27,0.1); border-radius: 8px; background: #fff; padding: 24px; margin-top: 40px;
+  }
+  .iotd-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .iotd-header svg { width: 20px; height: 20px; color: #f97316; }
+  .iotd-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .iotd-desc { font-size: 14px; color: #6b7280; margin-bottom: 16px; }
+  .iotd-badges { display: flex; gap: 8px; margin-bottom: 16px; }
+  .scores-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+  .score-gauge { text-align: center; }
+  .score-circle {
+    width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+  .score-label { font-size: 11px; color: #6b7280; margin-top: 4px; }
+  .score-green { background: #dcfce7; color: #166534; }
+  .score-yellow { background: #fef9c3; color: #854d0e; }
+  .score-orange { background: #ffedd5; color: #9a3412; }
+
+  /* ── Reviews ── */
+  .reviews-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .review-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #fff; }
+  .review-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .review-avatar {
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .review-name { font-size: 14px; font-weight: 600; }
+  .review-role { font-size: 12px; color: #6b7280; }
+  .stars { display: flex; gap: 2px; margin-bottom: 8px; }
+  .stars svg { width: 14px; height: 14px; }
+  .star-filled { color: #facc15; fill: #facc15; }
+  .star-empty { color: #e5e7eb; fill: #e5e7eb; }
+  .review-text { font-size: 14px; color: #6b7280; line-height: 1.5; }
+  .review-cat { margin-top: 12px; }
+
+  /* ── Success Stories ── */
+  .stories-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .story-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #fff; }
+  .story-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .story-avatar {
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .story-revenue { margin-left: auto; background: #f3f4f6; border-radius: 9999px; padding: 2px 10px; font-size: 12px; font-weight: 500; }
+  .story-quote { font-size: 14px; color: #6b7280; line-height: 1.5; margin-bottom: 8px; }
+  .story-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; }
+
+  /* ── Trust Signals ── */
+  .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 32px; }
+  .trust-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center; background: #fff; }
+  .trust-card svg { width: 20px; height: 20px; color: #6b7280; margin: 0 auto 8px; display: block; }
+  .trust-title { font-size: 14px; font-weight: 500; }
+  .trust-desc { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+  /* ── Newsletter ── */
+  .newsletter { text-align: center; padding: 32px 0; }
+  .newsletter svg { width: 24px; height: 24px; color: #6b7280; margin: 0 auto 8px; display: block; }
+  .newsletter h3 { font-size: 15px; font-weight: 600; }
+  .newsletter .nl-sub { font-size: 14px; color: #6b7280; margin-top: 4px; margin-bottom: 16px; }
+  .nl-form { display: flex; gap: 8px; max-width: 384px; margin: 0 auto; }
+  .nl-input {
+    flex: 1; height: 36px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0 12px;
+    font-size: 14px; outline: none; font-family: inherit;
+  }
+  .nl-input:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167,139,250,0.15); }
+
+  /* ── Responsive ── */
+  @media (max-width: 1023px) {
+    .hero-inner { grid-template-columns: 1fr; text-align: center; }
+    .hero .subtitle { margin-left: auto; margin-right: auto; }
+    .hero-cta-wrap { display: flex; justify-content: center; }
+    .hero-right { display: none; }
+  }
+  @media (max-width: 767px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps-grid { grid-template-columns: 1fr; }
+    .ds-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .stories-grid { grid-template-columns: 1fr; }
+    .trust-grid { grid-template-columns: repeat(2, 1fr); }
+    .validate-cta { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="header">
+  <div class="header-inner">
+    <a href="#" class="header-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      FoodLaunch
+    </a>
+    <nav class="header-nav">
+      <a href="#">Validate</a>
+      <a href="#">Discover</a>
+      <a href="#">Pricing</a>
+      <a href="#">Explore</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ====== BAND 1: HERO ====== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>
+        <span>AI-powered food business discovery</span>
+      </div>
+      <h1>Find Your Next<br/><span class="accent">Food Business Idea</span></h1>
+      <p class="subtitle">From idea to launch: AI generates food business concepts complete with a business plan, mood board, menu engineering, and brand identity.</p>
+      <div class="hero-cta-wrap">
+        <a href="#" class="hero-cta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          Generate Food Business Ideas
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-image-wrapper">
+        <div class="hero-image-card">
+          <div class="hero-image-inner">
+            <div class="hero-image-content">
+              <div class="hero-image-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+              </div>
+              <p class="hero-image-text">Your next food empire starts here</p>
+            </div>
+          </div>
+        </div>
+        <div class="sticker sticker-idea"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> Business Idea</div>
+        <div class="sticker sticker-plan"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> Business Plan</div>
+        <div class="sticker sticker-mood"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> Mood Board</div>
+        <div class="sticker sticker-menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"/><path d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"/><path d="m2.1 21.8 6.4-6.3"/><path d="m19 5-7 7"/></svg> Menu Engineering</div>
+        <div class="sticker sticker-name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg> Name &amp; Logo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== BAND 2: STATS + VALIDATE CTA (white) ====== -->
+<section class="band band-white">
+  <div class="band-inner" style="padding-top:40px; padding-bottom:40px;">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+        <div><div class="stat-value">12,847</div><div class="stat-label">Ideas Validated</div></div>
+      </div>
+      <div class="stat-card">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div><div class="stat-value">2,340</div><div class="stat-label">Goldilocks Found</div></div>
+      </div>
+      <div class="stat-card">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        <div><div class="stat-value">67</div><div class="stat-label">Avg Score</div></div>
+      </div>
+      <div class="stat-card">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <div><div class="stat-value">12</div><div class="stat-label">Categories</div></div>
+      </div>
+    </div>
+
+    <!-- Validate CTA -->
+    <div class="validate-cta">
+      <div class="validate-cta-left">
+        <div class="validate-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <div>
+          <h2 style="font-size:18px;" class="bold">Already have a food business idea?</h2>
+          <p class="muted small" style="margin-top:4px;">Get a 60-second reality check with real search volume, competitor analysis, and a data-driven score.</p>
+        </div>
+      </div>
+      <a href="#" class="btn">Validate an Idea <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ====== BAND 3: HOW IT WORKS (gray) ====== -->
+<section class="band band-gray">
+  <div class="band-inner" style="padding-top:48px; padding-bottom:48px;">
+    <h2 class="section-title">How It Works</h2>
+    <div style="height:24px;"></div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <span>Pick a Food Category</span>
+        </div>
+        <p class="step-desc">Choose from 12 food &amp; beverage categories and set your target location.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>
+          <span>AI Generates 50 Ideas</span>
+        </div>
+        <p class="step-desc">Our engine researches real search data and creates data-backed food business opportunities.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <span>Find Golden Opportunities</span>
+        </div>
+        <p class="step-desc">Ideas ranked by demand, competition, and monetization potential.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== BAND 4: DATA SOURCES (white) ====== -->
+<section class="band band-white">
+  <div class="band-inner" style="padding-top:48px; padding-bottom:48px;">
+    <h2 style="text-align:center; font-size:20px; font-weight:700; margin-bottom:8px;">Powered by Real Market Data</h2>
+    <p class="section-subtitle">Every food business idea is validated against multiple authoritative data sources — no guesswork, just real numbers.</p>
+    <div class="pills-row">
+      <span class="badge-purple"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>1M+ data points analyzed</span>
+      <span class="badge-purple"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22.54 12.43-8.58 3.91a2 2 0 0 1-1.66 0L2.6 12.43"/><path d="m22.54 17.43-8.58 3.91a2 2 0 0 1-1.66 0L2.6 17.43"/></svg>7 data sources</span>
+      <span class="badge-purple"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>Real-time market signals</span>
+    </div>
+    <div class="ds-grid">
+      <div class="ds-card">
+        <div class="ds-header">
+          <div class="ds-icon" style="background:#eff6ff;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <div><div class="ds-name">Google Ads Keywords</div><span class="ds-provider">via DataForSEO</span></div>
+        </div>
+        <p class="ds-desc">Real search volume, competition index, and CPC data for every keyword we analyze.</p>
+        <p class="ds-metric">50K+ keywords tracked</p>
+      </div>
+      <div class="ds-card">
+        <div class="ds-header">
+          <div class="ds-icon" style="background:#f0fdf4;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+          <div><div class="ds-name">Google Trends</div><span class="ds-provider">via DataForSEO</span></div>
+        </div>
+        <p class="ds-desc">12-month trend data and momentum signals to spot rising and declining markets.</p>
+        <p class="ds-metric">12-month trend analysis</p>
+      </div>
+      <div class="ds-card">
+        <div class="ds-header">
+          <div class="ds-icon" style="background:#fff7ed;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></div>
+          <div><div class="ds-name">Google SERP Analysis</div><span class="ds-provider">via DataForSEO</span></div>
+        </div>
+        <p class="ds-desc">Top 10 organic search results to map competitors and identify market gaps.</p>
+        <p class="ds-metric">10 competitors per query</p>
+      </div>
+      <div class="ds-card">
+        <div class="ds-header">
+          <div class="ds-icon" style="background:#fefce8;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>
+          <div><div class="ds-name">Amazon Marketplace</div><span class="ds-provider">via DataForSEO</span></div>
+        </div>
+        <p class="ds-desc">Food product data, pricing, ratings, and bestseller signals for packaged food validation.</p>
+        <p class="ds-metric">500K+ products indexed</p>
+      </div>
+      <div class="ds-card">
+        <div class="ds-header">
+          <div class="ds-icon" style="background:#faf5ff;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M19.938 10.5a4 4 0 0 1 .585.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M19.967 17.484A4 4 0 0 1 18 18"/></svg></div>
+          <div><div class="ds-name">Claude AI</div><span class="ds-provider">Anthropic</span></div>
+        </div>
+        <p class="ds-desc">Food industry AI for idea generation, competitive scoring, and deep-dive restaurant analysis.</p>
+        <p class="ds-metric">AI-powered scoring engine</p>
+      </div>
+      <div class="ds-card">
+        <div class="ds-header">
+          <div class="ds-icon" style="background:#fdf2f8;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
+          <div><div class="ds-name">Replicate AI</div><span class="ds-provider">Recraft V3 + Nano-Banana</span></div>
+        </div>
+        <p class="ds-desc">AI-generated moodboards and logo concepts for instant brand visualization.</p>
+        <p class="ds-metric">Visual brand assets</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== BAND 5: IDEA OF THE DAY (gray) ====== -->
+<section class="band band-gray">
+  <div class="band-inner" style="padding-top:48px; padding-bottom:48px;">
+    <div class="iotd">
+      <div class="iotd-header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        <h2 class="semibold">Idea of the Day</h2>
+      </div>
+      <div class="iotd-title">Gourmet Empanada Delivery Kitchen</div>
+      <p class="iotd-desc">A delivery-first ghost kitchen specializing in artisan empanadas with globally-inspired fillings and house-made dipping sauces.</p>
+      <div class="iotd-badges">
+        <span class="badge-outline">Ghost Kitchen &amp; Delivery-Only</span>
+        <span class="badge-secondary">New York, USA</span>
+      </div>
+      <div class="scores-row">
+        <div class="score-gauge"><div class="score-circle score-green">82</div><div class="score-label">Overall</div></div>
+        <div class="score-gauge"><div class="score-circle score-green">88</div><div class="score-label">Demand</div></div>
+        <div class="score-gauge"><div class="score-circle score-yellow">65</div><div class="score-label">Competition</div></div>
+        <div class="score-gauge"><div class="score-circle score-green">79</div><div class="score-label">Monetization</div></div>
+      </div>
+      <a href="#" class="btn-outline">Validate this idea <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ====== BAND 6: CUSTOMER REVIEWS (white) ====== -->
+<section class="band band-white">
+  <div class="band-inner" style="padding-top:48px; padding-bottom:48px;">
+    <h2 class="section-title">What Entrepreneurs Are Saying</h2>
+    <p class="section-subtitle">Join thousands who validated their food business ideas with real market data</p>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar" style="background:#f59e0b;">M</div>
+          <div><div class="review-name">Marcus Johnson</div><div class="review-role">Aspiring Food Truck Owner</div></div>
+        </div>
+        <div class="stars"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="review-text">&ldquo;I had a dozen food truck ideas but no clue which one would actually work. FoodLaunch showed me that gourmet grilled cheese had 3x the search demand of my other concepts with half the competition.&rdquo;</p>
+        <div class="review-cat"><span class="badge-outline">Food Truck Ideas</span></div>
+      </div>
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar" style="background:#3b82f6;">E</div>
+          <div><div class="review-name">Elena Vasquez</div><div class="review-role">First-Time Restaurant Founder</div></div>
+        </div>
+        <div class="stars"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="review-text">&ldquo;FoodLaunch gave me real data — my vegan fast-casual concept scored 87/100 and the competitor analysis revealed a gap nobody else was filling. Opening next month.&rdquo;</p>
+        <div class="review-cat"><span class="badge-outline">Restaurant Ideas</span></div>
+      </div>
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar" style="background:#22c55e;">D</div>
+          <div><div class="review-name">David Park</div><div class="review-role">Restaurant Industry Veteran</div></div>
+        </div>
+        <div class="stars"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="review-text">&ldquo;After 15 years in restaurants, I wanted to test new food concepts before investing. The search volume data for plant-based Korean fusion was eye-opening — 12K monthly searches and rising fast.&rdquo;</p>
+        <div class="review-cat"><span class="badge-outline">New Food Concepts</span></div>
+      </div>
+      <div class="review-card">
+        <div class="review-header">
+          <div class="review-avatar" style="background:#a855f7;">S</div>
+          <div><div class="review-name">Sarah Mitchell</div><div class="review-role">Ghost Kitchen Entrepreneur</div></div>
+        </div>
+        <div class="stars"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="star-filled"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="review-text">&ldquo;I was torn between launching a poke bowl brand or a comfort food delivery concept. FoodLaunch showed the poke bowl market was oversaturated locally, but late-night comfort food had massive unmet demand.&rdquo;</p>
+        <div class="review-cat"><span class="badge-outline">Ghost Kitchen Ideas</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== BAND 7: SUCCESS STORIES + TRUST SIGNALS (gray) ====== -->
+<section class="band band-gray">
+  <div class="band-inner" style="padding-top:48px; padding-bottom:48px;">
+    <div class="stories-header">
+      <h2 class="semibold">Success Stories</h2>
+      <a href="#" class="btn-ghost">View all <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+    <div class="stories-grid">
+      <div class="story-card">
+        <div class="story-header">
+          <div class="story-avatar" style="background:#22c55e;">F</div>
+          <div><div class="review-name">FreshBowl</div><div class="review-role">by Maria Chen</div></div>
+          <span class="story-revenue">$2.4M ARR</span>
+        </div>
+        <p class="story-quote">&ldquo;Started by validating demand with a simple Google Form and Instagram ads. Hit 100 orders in the first week.&rdquo;</p>
+        <div class="story-meta"><span class="badge-outline">Meal Prep &amp; Subscription</span> Los Angeles, USA</div>
+      </div>
+      <div class="story-card">
+        <div class="story-header">
+          <div class="story-avatar" style="background:#3b82f6;">C</div>
+          <div><div class="review-name">CloudBite</div><div class="review-role">by James O'Brien</div></div>
+          <span class="story-revenue">$1.8M ARR</span>
+        </div>
+        <p class="story-quote">&ldquo;Ran 4 virtual brands from one kitchen — each targeting a different cuisine. &lsquo;Korean fried chicken delivery&rsquo; had 15K monthly searches with zero good options.&rdquo;</p>
+        <div class="story-meta"><span class="badge-outline">Ghost Kitchen &amp; Delivery-Only</span> London, UK</div>
+      </div>
+      <div class="story-card">
+        <div class="story-header">
+          <div class="story-avatar" style="background:#a855f7;">R</div>
+          <div><div class="review-name">Rise &amp; Knead</div><div class="review-role">by Priya Sharma</div></div>
+          <span class="story-revenue">$450K ARR</span>
+        </div>
+        <p class="story-quote">&ldquo;Started baking from home during lockdown. Instagram reels of the bread-making process went viral and drove all initial demand.&rdquo;</p>
+        <div class="story-meta"><span class="badge-outline">Bakery &amp; Pastry</span> Mumbai, India</div>
+      </div>
+    </div>
+
+    <!-- Trust Signals -->
+    <div class="trust-grid">
+      <div class="trust-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+        <div class="trust-title">Real Search Data</div>
+        <div class="trust-desc">Powered by Google Ads keyword metrics</div>
+      </div>
+      <div class="trust-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
+        <div class="trust-title">Food Industry AI</div>
+        <div class="trust-desc">Claude AI tuned for food &amp; beverage analysis</div>
+      </div>
+      <div class="trust-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+        <div class="trust-title">Data-Driven Scores</div>
+        <div class="trust-desc">Quantified demand, competition &amp; food market fit</div>
+      </div>
+      <div class="trust-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <div class="trust-title">60-Second Results</div>
+        <div class="trust-desc">Full food business validation in under a minute</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== BAND 8: NEWSLETTER (white) ====== -->
+<section class="band band-white">
+  <div class="band-inner" style="padding-top:48px; padding-bottom:48px;">
+    <div class="newsletter">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      <h3>Get the Top Ideas Weekly</h3>
+      <p class="nl-sub">Join 2,400+ entrepreneurs. Free, no spam, unsubscribe anytime.</p>
+      <form class="nl-form" onsubmit="event.preventDefault();">
+        <input type="email" class="nl-input" placeholder="you@example.com" />
+        <button type="submit" class="btn">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

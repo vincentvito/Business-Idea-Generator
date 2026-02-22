@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreditCard, ExternalLink, User, BarChart3, Info } from "lucide-react";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass-client";
 
-const isBypass = process.env.NEXT_PUBLIC_BYPASS_AUTH === "true";
+const isBypass = AUTH_BYPASS_ENABLED;
 
 const tierColors: Record<string, string> = {
   FREE: "bg-muted text-muted-foreground",
@@ -27,7 +28,7 @@ export default function AccountPage() {
   const router = useRouter();
   const [isManaging, setIsManaging] = useState(false);
 
-  if (status === "loading") {
+  if (!isBypass && status === "loading") {
     return (
       <PageContainer>
         <div className="animate-pulse space-y-4">

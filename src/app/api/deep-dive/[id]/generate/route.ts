@@ -31,7 +31,7 @@ export async function POST(
     const idea = deepDive.ideaData as unknown as RankedIdea;
     const filters = deepDive.filters as unknown as DiscoveryFilters | undefined;
 
-    // Step 1: Generate all text content via 3 parallel Claude calls
+    // Step 1: Generate all text content via 5 parallel Claude calls
     const content = await generateDeepDiveContent(
       idea,
       deepDive.category,
@@ -47,6 +47,8 @@ export async function POST(
         brandNames: JSON.parse(JSON.stringify(content.brandNames)),
         devilsAdvocate: JSON.parse(JSON.stringify(content.devilsAdvocate)),
         validationRoadmap: JSON.parse(JSON.stringify(content.validationRoadmap)),
+        menuOrProduct: JSON.parse(JSON.stringify(content.menuOrProduct)),
+        marketingPlan: JSON.parse(JSON.stringify(content.marketingPlan)),
         status: "IMAGES_PENDING",
       },
     });

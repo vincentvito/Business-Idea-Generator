@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import { TIER_LIMITS, type TierName } from "@/lib/auth/tier-limits";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass";
 
 export async function GET() {
-  if (process.env.BYPASS_AUTH === "true") {
+  if (AUTH_BYPASS_ENABLED) {
     return Response.json({
       tier: "PRO",
       validate: { used: 0, limit: Infinity },

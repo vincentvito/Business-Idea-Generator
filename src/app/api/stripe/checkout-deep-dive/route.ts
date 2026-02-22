@@ -1,13 +1,11 @@
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import { stripe } from "@/lib/stripe/client";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass";
 
 export async function POST(request: Request) {
   // Dev bypass
-  if (
-    process.env.BYPASS_AUTH === "true" ||
-    process.env.NEXT_PUBLIC_BYPASS_AUTH === "true"
-  ) {
+  if (AUTH_BYPASS_ENABLED) {
     const { ideaData, category, location, filters } = await request.json();
 
     // In bypass mode, skip Stripe and go straight to GENERATING

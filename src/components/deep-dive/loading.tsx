@@ -14,7 +14,7 @@ const STAGES = [
     icon: Brain,
     label: "Generating deep dive content...",
     description:
-      "Our AI is building your business plan, brand names, risk analysis, and validation roadmap",
+      "Our AI is building your business plan, brand names, menu design, marketing plan, risk analysis, and validation roadmap",
   },
   {
     status: "IMAGES_PENDING",

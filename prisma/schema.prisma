@@ -139,6 +139,8 @@ model DeepDive {
   brandNames        Json?
   devilsAdvocate    Json?
   validationRoadmap Json?
+  menuOrProduct     Json?    // MenuEngineering or ProductLineup
+  marketingPlan     Json?    // 90-day marketing plan
   moodboardImages   Json?    // string[] of image URLs
   logoUrl           String?
 

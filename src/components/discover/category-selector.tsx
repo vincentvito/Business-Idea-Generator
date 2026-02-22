@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import {
   CATEGORIES,
+  POPULAR_CATEGORIES,
+  CATEGORY_ICONS,
   BUDGET_RANGES,
   BUSINESS_MODELS,
   TIME_COMMITMENTS,
@@ -12,9 +16,20 @@ import {
   TARGET_MARKETS,
   TEAM_SIZES,
   DELIVERY_MODELS,
-  TIME_TO_REVENUE,
+  TIME_TO_FIRST_SALE,
+  CUISINE_SPECIALTIES,
 } from "@/lib/constants";
-import { ChevronDown, Loader2, Sparkles } from "lucide-react";
+import {
+  ChevronDown,
+  Loader2,
+  Sparkles,
+  UtensilsCrossed,
+  Truck,
+  CakeSlice,
+  ChefHat,
+  Coffee,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { DiscoveryFilters } from "@/types/discovery";
 
 interface CategorySelectorProps {
@@ -25,6 +40,14 @@ interface CategorySelectorProps {
 
 const selectClass =
   "mt-1.5 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+
+const iconComponents: Record<string, LucideIcon> = {
+  UtensilsCrossed,
+  Truck,
+  CakeSlice,
+  ChefHat,
+  Coffee,
+};
 
 function FilterSelect({
   id,
@@ -78,6 +101,7 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
   const [teamSize, setTeamSize] = useState("");
   const [deliveryModel, setDeliveryModel] = useState("");
   const [timeToRevenue, setTimeToRevenue] = useState("");
+  const [cuisineSpecialty, setCuisineSpecialty] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +116,7 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
       if (teamSize) filters.teamSize = teamSize;
       if (deliveryModel) filters.deliveryModel = deliveryModel;
       if (timeToRevenue) filters.timeToRevenue = timeToRevenue;
+      if (cuisineSpecialty) filters.cuisineSpecialty = cuisineSpecialty;
       onSubmit(category, location.trim(), filters);
     }
   };
@@ -106,43 +131,103 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
     teamSize,
     deliveryModel,
     timeToRevenue,
+    cuisineSpecialty,
   ].filter(Boolean).length;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="category" className="text-sm font-medium text-muted-foreground">
-            Food Business Type
-          </label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            disabled={isRunning}
-            className={selectClass}
-          >
-            <option value="">Select a food business type...</option>
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="location" className="text-sm font-medium text-muted-foreground">
-            Location
-          </label>
-          <Input
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g., Milan, Italy"
-            disabled={isRunning}
-            className="mt-1.5"
-          />
-        </div>
+      {/* Category selection with tabs */}
+      <div>
+        <label className="text-sm font-medium text-muted-foreground mb-1.5 block">
+          Food Business Type
+        </label>
+        <Tabs defaultValue="popular">
+          <TabsList className="mb-3">
+            <TabsTrigger value="popular">Popular</TabsTrigger>
+            <TabsTrigger value="all">All Categories</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="popular">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+              {POPULAR_CATEGORIES.map((cat) => {
+                const iconName = CATEGORY_ICONS[cat.name];
+                const Icon = iconName ? iconComponents[iconName] : null;
+                const isSelected = category === cat.name;
+
+                return (
+                  <button
+                    key={cat.name}
+                    type="button"
+                    disabled={isRunning}
+                    onClick={() => setCategory(cat.name)}
+                    className={cn(
+                      "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition-all hover:border-primary/50",
+                      isSelected
+                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                        : "border-border bg-card",
+                      isRunning && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex h-8 w-8 items-center justify-center rounded-md",
+                        isSelected
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      {Icon && <Icon className="h-4 w-4" />}
+                    </div>
+                    <span className="text-xs font-medium leading-tight">
+                      {cat.name.split(" & ")[0]}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground leading-tight hidden sm:block">
+                      {cat.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="all">
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              disabled={isRunning}
+              className={selectClass}
+            >
+              <option value="">Select a food business type...</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </TabsContent>
+        </Tabs>
+
+        {category && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Selected: <span className="font-medium text-foreground">{category}</span>
+          </p>
+        )}
+      </div>
+
+      {/* Location */}
+      <div>
+        <label htmlFor="location" className="text-sm font-medium text-muted-foreground">
+          Location
+        </label>
+        <Input
+          id="location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="e.g., Milan, Italy"
+          disabled={isRunning}
+          className="mt-1.5"
+        />
       </div>
 
       <button
@@ -193,6 +278,14 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
             />
           </div>
           <FilterSelect
+            id="cuisineSpecialty"
+            label="Cuisine / Specialty"
+            value={cuisineSpecialty}
+            onChange={setCuisineSpecialty}
+            options={CUISINE_SPECIALTIES}
+            disabled={isRunning}
+          />
+          <FilterSelect
             id="timeCommitment"
             label="Time Commitment"
             value={timeCommitment}
@@ -218,7 +311,7 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
           />
           <FilterSelect
             id="teamSize"
-            label="Team Size"
+            label="Kitchen & Staff"
             value={teamSize}
             onChange={setTeamSize}
             options={TEAM_SIZES}
@@ -234,10 +327,10 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
           />
           <FilterSelect
             id="timeToRevenue"
-            label="Time to Revenue"
+            label="Time to First Sale"
             value={timeToRevenue}
             onChange={setTimeToRevenue}
-            options={TIME_TO_REVENUE}
+            options={TIME_TO_FIRST_SALE}
             disabled={isRunning}
           />
         </div>

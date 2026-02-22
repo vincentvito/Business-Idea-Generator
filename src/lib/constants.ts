@@ -15,6 +15,32 @@ export const CATEGORIES = [
 
 export type Category = (typeof CATEGORIES)[number];
 
+export const POPULAR_CATEGORIES: Array<{
+  name: Category;
+  description: string;
+}> = [
+  { name: "Restaurant & Dining", description: "Full-service, fast-casual, or fine dining" },
+  { name: "Café & Coffee Shop", description: "Specialty coffee, brunch spots, tea houses" },
+  { name: "Food Truck & Street Food", description: "Mobile kitchens, food carts, pop-ups" },
+  { name: "Bakery & Pastry", description: "Artisan bread, custom cakes, pastry shops" },
+  { name: "Ghost Kitchen & Delivery-Only", description: "Cloud kitchens, virtual restaurant brands" },
+];
+
+export const MENU_CATEGORIES = [
+  "Restaurant & Dining",
+  "Food Truck & Street Food",
+  "Bakery & Pastry",
+  "Catering & Events",
+  "Ghost Kitchen & Delivery-Only",
+  "Bar, Pub & Nightlife",
+  "Café & Coffee Shop",
+  "Meal Prep & Subscription",
+] as const;
+
+export function isMenuCategory(category: string): boolean {
+  return (MENU_CATEGORIES as readonly string[]).includes(category);
+}
+
 export const POPULAR_LOCATIONS = [
   "New York, USA",
   "Los Angeles, USA",
@@ -38,6 +64,7 @@ export const VALIDATION_STAGES = [
   { id: "metrics", label: "Fetching search data", icon: "BarChart3" },
   { id: "trends", label: "Analyzing trends", icon: "TrendingUp" },
   { id: "competitors", label: "Analyzing competitors", icon: "Users" },
+  { id: "local_competition", label: "Scanning local competitors", icon: "MapPin" },
   { id: "ecommerce", label: "Checking marketplace data", icon: "ShoppingCart" },
   { id: "scoring", label: "Computing scores", icon: "Target" },
 ] as const;
@@ -80,12 +107,20 @@ export const REVENUE_GOALS = [
   "$50K+/mo (scale)",
 ] as const;
 
-export const TARGET_MARKETS = ["B2B", "B2C", "Both"] as const;
+export const TARGET_MARKETS = [
+  "B2B",
+  "B2C",
+  "Both (B2B + B2C)",
+  "Families",
+  "Young Professionals",
+  "Health-Conscious",
+  "Foodies & Enthusiasts",
+] as const;
 
 export const TEAM_SIZES = [
   "Solo founder",
-  "Small team (2-5)",
-  "Team (5+)",
+  "Small crew (2-5 staff)",
+  "Full kitchen team (5+)",
 ] as const;
 
 export const DELIVERY_MODELS = [
@@ -96,11 +131,28 @@ export const DELIVERY_MODELS = [
   "Pop-up / Mobile",
 ] as const;
 
-export const TIME_TO_REVENUE = [
+export const TIME_TO_FIRST_SALE = [
   "Under 1 month",
   "1–3 months",
   "3–6 months",
   "6+ months",
+] as const;
+
+export const CUISINE_SPECIALTIES = [
+  "Italian",
+  "Asian Fusion",
+  "Mexican / Latin",
+  "Mediterranean",
+  "American Comfort",
+  "Japanese / Sushi",
+  "Indian",
+  "Vegan / Plant-Based",
+  "Organic & Farm-to-Table",
+  "BBQ & Smoked",
+  "Desserts & Sweets",
+  "Seafood",
+  "Middle Eastern",
+  "No Specific Cuisine",
 ] as const;
 
 export const CATEGORY_SEED_KEYWORDS: Record<string, string[]> = {

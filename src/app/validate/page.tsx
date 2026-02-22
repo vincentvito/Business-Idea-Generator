@@ -31,6 +31,7 @@ import type {
   MoatAnalysis,
   TrendData,
   AmazonProductData,
+  LocalCompetitionData,
   ScoreData,
 } from "@/types/validation";
 
@@ -41,6 +42,7 @@ interface ValidationResult {
   competitors: CompetitorAnalysis[] | null;
   moat: MoatAnalysis | null;
   amazon: AmazonProductData[] | null;
+  localCompetition: LocalCompetitionData | null;
   scores: ScoreData | null;
 }
 
@@ -52,6 +54,7 @@ function transformValidationResult(events: PipelineEvent[]): ValidationResult {
     competitors: null,
     moat: null,
     amazon: null,
+    localCompetition: null,
     scores: null,
   };
 
@@ -79,6 +82,9 @@ function transformValidationResult(events: PipelineEvent[]): ValidationResult {
         result.moat = data.moat;
         break;
       }
+      case "local_competition":
+        result.localCompetition = event.data as LocalCompetitionData | null;
+        break;
       case "ecommerce":
         result.amazon = event.data as AmazonProductData[];
         break;
@@ -166,6 +172,7 @@ export default function ValidatePage() {
       competitors: null,
       moat: null,
       amazon: null,
+      localCompetition: null,
       scores: null,
     };
 
@@ -188,6 +195,9 @@ export default function ValidatePage() {
       r.moat = data.moat;
     }
 
+    const loc = completedStages.get("local_competition");
+    if (loc) r.localCompetition = loc as LocalCompetitionData | null;
+
     const amz = completedStages.get("ecommerce");
     if (amz) r.amazon = amz as AmazonProductData[];
 
@@ -207,6 +217,7 @@ export default function ValidatePage() {
     progressiveResult.metrics ||
     progressiveResult.trends ||
     progressiveResult.competitors ||
+    progressiveResult.localCompetition ||
     progressiveResult.amazon ||
     progressiveResult.scores;
 
@@ -371,6 +382,7 @@ export default function ValidatePage() {
             competitors={progressiveResult.competitors}
             moat={progressiveResult.moat}
             amazon={progressiveResult.amazon}
+            localCompetition={progressiveResult.localCompetition}
             scores={progressiveResult.scores}
             warnings={stageWarnings}
           />

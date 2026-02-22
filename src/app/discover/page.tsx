@@ -25,6 +25,12 @@ import {
   Star,
   TrendingUp,
   Users,
+  CheckCircle2,
+  PenTool,
+  FileText,
+  Megaphone,
+  Palette,
+  Swords,
 } from "lucide-react";
 import type { PipelineEvent } from "@/types/pipeline";
 import type { RankedIdea, DiscoveryFilters } from "@/types/discovery";
@@ -80,25 +86,51 @@ const HOW_IT_WORKS = [
 
 const FEATURES = [
   {
-    icon: Lightbulb,
-    color: "text-yellow-500",
-    bg: "bg-yellow-50",
-    title: "50 Food Business Ideas",
-    desc: "AI-generated food & beverage ideas tailored to your category, location, and preferences",
+    icon: CheckCircle2,
+    color: "text-green-500",
+    bg: "bg-green-50",
+    title: "Validated Business Idea",
+    desc: "50 AI-generated ideas, each validated with real Google search volume and local competition data",
   },
   {
-    icon: BarChart3,
+    icon: PenTool,
+    color: "text-pink-500",
+    bg: "bg-pink-50",
+    title: "Brand Name & Logo",
+    desc: "Creative name suggestions with taglines, domain ideas, and AI-generated logo concepts",
+    tier: "Deep Dive",
+  },
+  {
+    icon: FileText,
     color: "text-blue-500",
     bg: "bg-blue-50",
-    title: "Real Market Data",
-    desc: "Each idea validated with actual Google search volume and local competition metrics",
+    title: "Full Business Plan",
+    desc: "Executive summary, mission & vision, target market analysis, financial projections, and competitive advantage",
+    tier: "Deep Dive",
   },
   {
-    icon: Star,
+    icon: Megaphone,
+    color: "text-orange-500",
+    bg: "bg-orange-50",
+    title: "Marketing & Go-To-Market",
+    desc: "Lean canvas, revenue model, and a 30-day go-to-market plan with weekly milestones",
+    tier: "Day Zero",
+  },
+  {
+    icon: Palette,
     color: "text-purple-500",
     bg: "bg-purple-50",
-    title: "Golden Opportunities",
-    desc: "Top food ideas highlighted with high demand, low competition, and strong margins",
+    title: "Visual Moodboard",
+    desc: "AI-generated brand imagery, color palette, logo, and style keywords to bring your brand to life",
+    tier: "Deep Dive",
+  },
+  {
+    icon: Swords,
+    color: "text-red-500",
+    bg: "bg-red-50",
+    title: "Competition Analysis",
+    desc: "Competitor mapping, your differentiators, risk assessment, and a devil\u2019s advocate review",
+    tier: "Deep Dive",
   },
 ] as const;
 
@@ -282,8 +314,13 @@ export default function DiscoverPage() {
 
           {/* Band 4: What You'll Get */}
           <SectionBand innerClassName="py-10">
-            <h2 className="text-center text-lg font-semibold mb-6">What You&apos;ll Get</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <h2 className="text-center text-xl font-semibold mb-2">
+              Everything You Need to Launch
+            </h2>
+            <p className="text-center text-sm text-muted-foreground mb-8 max-w-2xl mx-auto">
+              From validated idea to full business plan — get everything to go from zero to launch.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {FEATURES.map((f) => (
                 <div key={f.title} className="rounded-xl border bg-card p-5 text-center">
                   <div className={`mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${f.bg}`}>
@@ -291,6 +328,11 @@ export default function DiscoverPage() {
                   </div>
                   <h3 className="font-medium text-sm">{f.title}</h3>
                   <p className="text-xs text-muted-foreground mt-1.5">{f.desc}</p>
+                  {"tier" in f && (
+                    <span className="mt-3 inline-block text-[10px] font-medium text-muted-foreground bg-muted rounded-full px-2 py-0.5">
+                      {f.tier === "Day Zero" ? "Free with Pro" : "$29.99 Deep Dive"}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

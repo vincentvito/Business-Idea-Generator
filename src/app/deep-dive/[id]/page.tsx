@@ -6,10 +6,12 @@ import { useDeepDive } from "@/hooks/use-deep-dive";
 import { DeepDiveLoading } from "@/components/deep-dive/loading";
 import { DeepDiveError } from "@/components/deep-dive/error";
 import { BusinessPlanSection } from "@/components/deep-dive/business-plan-section";
-import { MoodboardSection } from "@/components/deep-dive/moodboard-section";
 import { BrandNamesSection } from "@/components/deep-dive/brand-names-section";
+import { MenuOrProductSection } from "@/components/deep-dive/menu-section";
+import { MarketingPlanSection } from "@/components/deep-dive/marketing-plan-section";
 import { DevilsAdvocateSection } from "@/components/deep-dive/devils-advocate-section";
 import { ValidationRoadmapSection } from "@/components/deep-dive/validation-roadmap-section";
+import { MoodboardSection } from "@/components/deep-dive/moodboard-section";
 import { DeepDivePDFButton } from "@/components/deep-dive/pdf-button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
@@ -97,6 +99,15 @@ export default function DeepDivePage({
           )}
           {data.brandNames && (
             <BrandNamesSection names={data.brandNames} />
+          )}
+          {data.menuOrProduct && (
+            <MenuOrProductSection data={data.menuOrProduct} />
+          )}
+          {data.marketingPlan && (
+            <MarketingPlanSection
+              data={data.marketingPlan}
+              deepDiveId={data.id}
+            />
           )}
           {data.devilsAdvocate && (
             <DevilsAdvocateSection data={data.devilsAdvocate} />

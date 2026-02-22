@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass-client";
 
 const tierColors: Record<string, string> = {
   FREE: "bg-muted text-muted-foreground",
@@ -22,7 +23,7 @@ const tierColors: Record<string, string> = {
 export function UserMenu() {
   const { data: session, status } = useSession();
 
-  const isBypassed = process.env.NEXT_PUBLIC_BYPASS_AUTH === "true";
+  const isBypassed = AUTH_BYPASS_ENABLED;
 
   if (!isBypassed && status === "loading") {
     return (

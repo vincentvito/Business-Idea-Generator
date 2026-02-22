@@ -63,6 +63,8 @@ function buildFilterConstraints(filters?: DiscoveryFilters): string {
   if (filters.teamSize) lines.push(`- Team size: ${filters.teamSize}`);
   if (filters.deliveryModel) lines.push(`- Delivery model: ${filters.deliveryModel}`);
   if (filters.timeToRevenue) lines.push(`- Expected time to first revenue: ${filters.timeToRevenue}`);
+  if (filters.cuisineSpecialty && filters.cuisineSpecialty !== "No Specific Cuisine")
+    lines.push(`- Cuisine/specialty focus: ${filters.cuisineSpecialty} — ideas should be relevant to or inspired by this cuisine/specialty`);
 
   if (lines.length === 0) return "";
   return `\n\nFounder constraints (all ideas MUST respect these):\n${lines.join("\n")}`;

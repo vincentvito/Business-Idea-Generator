@@ -1,12 +1,10 @@
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass";
 
 export async function GET() {
   let userId: string;
-  if (
-    process.env.BYPASS_AUTH === "true" ||
-    process.env.NEXT_PUBLIC_BYPASS_AUTH === "true"
-  ) {
+  if (AUTH_BYPASS_ENABLED) {
     userId = "dev-user";
   } else {
     const session = await auth();

@@ -2,9 +2,10 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import { renderValidationPDF, renderPlanPDF } from "@/lib/pdf/render";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass";
 
 export async function POST(request: NextRequest) {
-  if (process.env.BYPASS_AUTH !== "true") {
+  if (!AUTH_BYPASS_ENABLED) {
     const session = await auth();
     if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });

@@ -3,9 +3,12 @@ import { fetchKeywordMetrics } from "@/lib/dataforseo/keyword-data";
 import { fetchTrendData } from "@/lib/dataforseo/trends";
 import { fetchSerpCompetitors } from "@/lib/dataforseo/serp";
 import { fetchAmazonData } from "@/lib/dataforseo/amazon";
+import { fetchLocalCompetitors } from "@/lib/dataforseo/google-maps";
+import { fetchBusinessDetails } from "@/lib/dataforseo/google-business";
 import { analyzeCompetitorsMoat } from "@/lib/ai/analyze-competitors";
 import { scoreIdea } from "@/lib/ai/score-idea";
 import type { PipelineEvent } from "@/types/pipeline";
+import type { LocalCompetitionData } from "@/types/validation";
 
 export async function runValidationPipeline(
   ideaText: string,
@@ -78,7 +81,45 @@ export async function runValidationPipeline(
     },
   });
 
-  // Stage 5: eCommerce Signal (DataForSEO Amazon)
+  // Stage 5: Local Competition (Google Maps + Business Info)
+  emit({
+    type: "stage_start",
+    stage: "local_competition",
+    message: "Scanning local competitors on Google Maps...",
+  });
+
+  let localCompetition: LocalCompetitionData | null = null;
+
+  if (keywordResult.location && keywordResult.location.toLowerCase() !== "global") {
+    localCompetition = await fetchLocalCompetitors(
+      keywordResult.niche,
+      keywordResult.location
+    );
+
+    // Fetch detailed info for top 3 by review count (cost-controlled)
+    if (localCompetition.top_competitors.length > 0) {
+      const topNames = localCompetition.top_competitors
+        .sort((a, b) => b.reviews_count - a.reviews_count)
+        .slice(0, 3)
+        .map((c) => c.name);
+
+      localCompetition.detailed_competitors = await fetchBusinessDetails(
+        topNames,
+        keywordResult.location
+      );
+    }
+  }
+
+  emit({
+    type: "stage_complete",
+    stage: "local_competition",
+    data: localCompetition,
+    ...((!keywordResult.location || keywordResult.location.toLowerCase() === "global")
+      ? { warning: "No location specified — local competition analysis skipped" }
+      : {}),
+  });
+
+  // Stage 6: eCommerce Signal (DataForSEO Amazon)
   emit({
     type: "stage_start",
     stage: "ecommerce",
@@ -91,14 +132,14 @@ export async function runValidationPipeline(
   );
   emit({ type: "stage_complete", stage: "ecommerce", data: amazonData });
 
-  // Stage 6: Scoring (Claude — enhanced with trend + Amazon data)
+  // Stage 7: Scoring (Claude — enhanced with trend + Amazon + local competition data)
   emit({
     type: "stage_start",
     stage: "scoring",
     message: "Computing your validation score...",
   });
 
-  const scores = await scoreIdea(keywordResult, metrics, moatResult, trendData, amazonData);
+  const scores = await scoreIdea(keywordResult, metrics, moatResult, trendData, amazonData, localCompetition);
   emit({ type: "stage_complete", stage: "scoring", data: scores });
 
   // Done

@@ -10,6 +10,7 @@ export interface DiscoveryFilters {
   teamSize?: string;
   deliveryModel?: string;
   timeToRevenue?: string;
+  cuisineSpecialty?: string;
 }
 
 export interface IdeaStub {

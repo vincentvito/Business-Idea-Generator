@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { ScoreGauge } from "./score-gauge";
 import { KeywordTable } from "./keyword-table";
 import { CompetitorCard } from "./competitor-card";
+import { LocalCompetitionCard } from "./local-competition-card";
 import { MoatAnalysis } from "./moat-analysis";
 import { TrendChart } from "@/components/shared/trend-chart";
 import { RevenueCalculator } from "@/components/shared/revenue-calculator";
@@ -26,6 +27,7 @@ import type {
   MoatAnalysis as MoatAnalysisType,
   TrendData,
   AmazonProductData,
+  LocalCompetitionData,
   ScoreData,
 } from "@/types/validation";
 
@@ -36,6 +38,7 @@ interface ValidationDashboardProps {
   competitors: CompetitorAnalysis[] | null;
   moat: MoatAnalysisType | null;
   amazon: AmazonProductData[] | null;
+  localCompetition: LocalCompetitionData | null;
   scores: ScoreData | null;
   warnings?: Map<string, string>;
 }
@@ -101,6 +104,7 @@ export function ValidationDashboard({
   competitors,
   moat,
   amazon,
+  localCompetition,
   scores,
   warnings,
 }: ValidationDashboardProps) {
@@ -113,7 +117,17 @@ export function ValidationDashboard({
         <div className="flex justify-end">
           <PDFDownloadButton
             type="validation"
-            data={{ scores, metrics, competitors, moat }}
+            data={{
+              idea: keywords?.niche,
+              keywords,
+              scores,
+              metrics,
+              trends,
+              competitors,
+              moat,
+              amazon,
+              localCompetition,
+            }}
             label="Export Report PDF"
           />
         </div>
@@ -130,7 +144,7 @@ export function ValidationDashboard({
             <p className="text-sm text-muted-foreground">{scores.one_liner}</p>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 gap-4 justify-items-center">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-items-center">
               <ScoreGauge score={scores.overall_score} label="Overall" size="lg" />
               <ScoreGauge score={scores.market_demand_score} label="Demand" />
               <ScoreGauge score={scores.competition_score} label="Competition" />
@@ -138,6 +152,9 @@ export function ValidationDashboard({
               <ScoreGauge score={scores.timing_score} label="Timing" />
               {scores.ecommerce_score != null && (
                 <ScoreGauge score={scores.ecommerce_score} label="eCommerce" />
+              )}
+              {scores.local_competition_score != null && (
+                <ScoreGauge score={scores.local_competition_score} label="Local" />
               )}
             </div>
 
@@ -300,6 +317,11 @@ export function ValidationDashboard({
             )}
           </CardContent>
         </Card>
+      )}
+
+      {/* Local Competition */}
+      {localCompetition && (
+        <LocalCompetitionCard data={localCompetition} />
       )}
 
       {/* Moat Analysis */}

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 import { pollPredictions } from "@/lib/replicate/generate-moodboard";
 import type { DeepDiveData } from "@/types/deep-dive";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass";
 
 export async function GET(
   _request: Request,
@@ -11,10 +12,7 @@ export async function GET(
 
   // Auth check (with bypass)
   let userId: string;
-  if (
-    process.env.BYPASS_AUTH === "true" ||
-    process.env.NEXT_PUBLIC_BYPASS_AUTH === "true"
-  ) {
+  if (AUTH_BYPASS_ENABLED) {
     userId = "dev-user";
   } else {
     const session = await auth();
@@ -76,6 +74,8 @@ function formatResponse(dd: {
   brandNames: unknown;
   devilsAdvocate: unknown;
   validationRoadmap: unknown;
+  menuOrProduct: unknown;
+  marketingPlan: unknown;
   moodboardImages: unknown;
   logoUrl: string | null;
   errorMessage: string | null;
@@ -93,6 +93,8 @@ function formatResponse(dd: {
     brandNames: dd.brandNames as DeepDiveData["brandNames"],
     devilsAdvocate: dd.devilsAdvocate as DeepDiveData["devilsAdvocate"],
     validationRoadmap: dd.validationRoadmap as DeepDiveData["validationRoadmap"],
+    menuOrProduct: dd.menuOrProduct as DeepDiveData["menuOrProduct"],
+    marketingPlan: dd.marketingPlan as DeepDiveData["marketingPlan"],
     moodboard:
       moodboardImages || dd.logoUrl
         ? {

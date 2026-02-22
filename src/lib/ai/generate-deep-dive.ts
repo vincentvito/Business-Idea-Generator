@@ -1,11 +1,16 @@
 import { getAnthropicClient } from "./client";
 import { SYSTEM_PROMPTS, MODEL } from "./prompts";
+import { isMenuCategory } from "@/lib/constants";
 import type { RankedIdea, DiscoveryFilters } from "@/types/discovery";
 import type {
   BusinessPlanBasics,
   BrandNameSuggestion,
   DevilsAdvocate,
   ValidationRoadmap,
+  MenuEngineering,
+  ProductLineup,
+  MenuOrProductData,
+  MarketingPlan,
 } from "@/types/deep-dive";
 
 // ── Tool schemas ─────────────────────────────────────────
@@ -275,6 +280,275 @@ const VALIDATION_ROADMAP_TOOL = {
   },
 };
 
+const MENU_ENGINEERING_TOOL = {
+  name: "generate_menu_engineering" as const,
+  description:
+    "Generates a complete menu design with pricing, food costs, and BCG matrix classification.",
+  input_schema: {
+    type: "object" as const,
+    properties: {
+      menu_categories: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            items: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  description: { type: "string" },
+                  price: { type: "string" },
+                  food_cost_percent: { type: "number" },
+                  profit_margin_percent: { type: "number" },
+                  category: { type: "string" },
+                  classification: {
+                    type: "string",
+                    enum: ["star", "plowhorse", "puzzle", "dog"],
+                  },
+                },
+                required: [
+                  "name",
+                  "description",
+                  "price",
+                  "food_cost_percent",
+                  "profit_margin_percent",
+                  "category",
+                  "classification",
+                ],
+              },
+            },
+          },
+          required: ["name", "items"],
+        },
+      },
+      pricing_strategy: { type: "string" },
+      upsell_recommendations: { type: "array", items: { type: "string" } },
+      combo_strategies: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            items: { type: "array", items: { type: "string" } },
+            bundle_price: { type: "string" },
+            savings_percent: { type: "number" },
+          },
+          required: ["name", "items", "bundle_price", "savings_percent"],
+        },
+      },
+      food_cost_summary: {
+        type: "object",
+        properties: {
+          average_food_cost_percent: { type: "number" },
+          target_food_cost_percent: { type: "number" },
+          recommendations: { type: "array", items: { type: "string" } },
+        },
+        required: [
+          "average_food_cost_percent",
+          "target_food_cost_percent",
+          "recommendations",
+        ],
+      },
+      stars_summary: { type: "string" },
+      plowhorses_summary: { type: "string" },
+      puzzles_summary: { type: "string" },
+      dogs_summary: { type: "string" },
+    },
+    required: [
+      "menu_categories",
+      "pricing_strategy",
+      "upsell_recommendations",
+      "combo_strategies",
+      "food_cost_summary",
+      "stars_summary",
+      "plowhorses_summary",
+      "puzzles_summary",
+      "dogs_summary",
+    ],
+  },
+};
+
+const PRODUCT_LINEUP_TOOL = {
+  name: "generate_product_lineup" as const,
+  description:
+    "Generates a product portfolio with pricing, margins, and distribution strategy.",
+  input_schema: {
+    type: "object" as const,
+    properties: {
+      products: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            description: { type: "string" },
+            price: { type: "string" },
+            cost_to_produce: { type: "string" },
+            margin_percent: { type: "number" },
+            category: { type: "string" },
+            classification: {
+              type: "string",
+              enum: ["hero", "cash_cow", "growth", "niche"],
+            },
+          },
+          required: [
+            "name",
+            "description",
+            "price",
+            "cost_to_produce",
+            "margin_percent",
+            "category",
+            "classification",
+          ],
+        },
+      },
+      pricing_strategy: { type: "string" },
+      bundle_strategies: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            products: { type: "array", items: { type: "string" } },
+            bundle_price: { type: "string" },
+            value_proposition: { type: "string" },
+          },
+          required: ["name", "products", "bundle_price", "value_proposition"],
+        },
+      },
+      margin_summary: {
+        type: "object",
+        properties: {
+          average_margin_percent: { type: "number" },
+          target_margin_percent: { type: "number" },
+          recommendations: { type: "array", items: { type: "string" } },
+        },
+        required: [
+          "average_margin_percent",
+          "target_margin_percent",
+          "recommendations",
+        ],
+      },
+      distribution_channels: { type: "array", items: { type: "string" } },
+      product_roadmap: { type: "string" },
+    },
+    required: [
+      "products",
+      "pricing_strategy",
+      "bundle_strategies",
+      "margin_summary",
+      "distribution_channels",
+      "product_roadmap",
+    ],
+  },
+};
+
+const MARKETING_PLAN_TOOL = {
+  name: "generate_marketing_plan" as const,
+  description:
+    "Generates a 90-day launch marketing plan with channel strategy, content calendar, and KPIs.",
+  input_schema: {
+    type: "object" as const,
+    properties: {
+      overview: { type: "string" },
+      total_budget: { type: "string" },
+      channels: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            channel: { type: "string" },
+            strategy: { type: "string" },
+            budget_allocation_percent: { type: "number" },
+            expected_roi: { type: "string" },
+            priority: {
+              type: "string",
+              enum: ["high", "medium", "low"],
+            },
+          },
+          required: [
+            "channel",
+            "strategy",
+            "budget_allocation_percent",
+            "expected_roi",
+            "priority",
+          ],
+        },
+      },
+      content_calendar: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            week: { type: "number" },
+            theme: { type: "string" },
+            posts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  platform: { type: "string" },
+                  content_type: { type: "string" },
+                  topic: { type: "string" },
+                  caption_idea: { type: "string" },
+                },
+                required: ["platform", "content_type", "topic", "caption_idea"],
+              },
+            },
+          },
+          required: ["week", "theme", "posts"],
+        },
+      },
+      pre_launch_tactics: { type: "array", items: { type: "string" } },
+      launch_week_tactics: { type: "array", items: { type: "string" } },
+      ongoing_tactics: { type: "array", items: { type: "string" } },
+      kpis: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            metric: { type: "string" },
+            target: { type: "string" },
+            measurement_tool: { type: "string" },
+          },
+          required: ["metric", "target", "measurement_tool"],
+        },
+      },
+      local_seo_checklist: { type: "array", items: { type: "string" } },
+      influencer_strategy: {
+        type: "object",
+        properties: {
+          target_type: { type: "string" },
+          outreach_template: { type: "string" },
+          budget_per_influencer: { type: "string" },
+          expected_reach: { type: "string" },
+        },
+        required: [
+          "target_type",
+          "outreach_template",
+          "budget_per_influencer",
+          "expected_reach",
+        ],
+      },
+    },
+    required: [
+      "overview",
+      "total_budget",
+      "channels",
+      "content_calendar",
+      "pre_launch_tactics",
+      "launch_week_tactics",
+      "ongoing_tactics",
+      "kpis",
+      "local_seo_checklist",
+      "influencer_strategy",
+    ],
+  },
+};
+
 // ── Helpers ──────────────────────────────────────────────
 
 function buildIdeaContext(
@@ -409,6 +683,89 @@ async function generateValidationRoadmap(
   return toolUse.input as ValidationRoadmap;
 }
 
+async function generateMenuOrProduct(
+  idea: RankedIdea,
+  category: string,
+  location: string,
+  filters?: DiscoveryFilters
+): Promise<MenuOrProductData> {
+  const client = getAnthropicClient();
+  const context = buildIdeaContext(idea, category, location, filters);
+
+  if (isMenuCategory(category)) {
+    const response = await client.messages.create({
+      model: MODEL,
+      max_tokens: 6144,
+      system: SYSTEM_PROMPTS.DEEP_DIVE_MENU,
+      tool_choice: { type: "tool", name: "generate_menu_engineering" },
+      tools: [MENU_ENGINEERING_TOOL],
+      messages: [
+        {
+          role: "user",
+          content: `Design a complete, profitable menu for this ${category} business:\n\n${context}\n\nCreate 15-25 menu items across 4-6 categories. Include appetizers/starters, mains, sides, desserts, and drinks as appropriate for the concept. Classify each item using the Stars/Plowhorses/Puzzles/Dogs matrix. Design at least 3 combo/bundle strategies. All prices in local currency for ${location}. Food costs must be realistic for the cuisine type.`,
+        },
+      ],
+    });
+    const toolUse = response.content.find((b) => b.type === "tool_use");
+    if (!toolUse || toolUse.type !== "tool_use") {
+      throw new Error("Claude did not return structured menu data");
+    }
+    return { type: "menu", data: toolUse.input as MenuEngineering };
+  } else {
+    const response = await client.messages.create({
+      model: MODEL,
+      max_tokens: 5120,
+      system: SYSTEM_PROMPTS.DEEP_DIVE_PRODUCT_LINEUP,
+      tool_choice: { type: "tool", name: "generate_product_lineup" },
+      tools: [PRODUCT_LINEUP_TOOL],
+      messages: [
+        {
+          role: "user",
+          content: `Design a complete product portfolio for this ${category} business:\n\n${context}\n\nCreate 8-15 products including hero products, steady sellers, growth bets, and niche items. Include pricing, production costs, and margin analysis. Design 2-4 bundle strategies. Consider distribution channels relevant to ${location}. Provide a phased product roadmap for the first 12 months.`,
+        },
+      ],
+    });
+    const toolUse = response.content.find((b) => b.type === "tool_use");
+    if (!toolUse || toolUse.type !== "tool_use") {
+      throw new Error("Claude did not return structured product lineup data");
+    }
+    return { type: "product_lineup", data: toolUse.input as ProductLineup };
+  }
+}
+
+async function generateMarketingPlan(
+  idea: RankedIdea,
+  category: string,
+  location: string,
+  filters?: DiscoveryFilters
+): Promise<MarketingPlan> {
+  const client = getAnthropicClient();
+  const context = buildIdeaContext(idea, category, location, filters);
+  const budgetNote = filters?.budget
+    ? `The total business budget is ${filters.budget}, so marketing budget should be proportional (typically 3-6% of projected first-year revenue).`
+    : "Assume a lean startup marketing budget appropriate for the concept size.";
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 6144,
+    system: SYSTEM_PROMPTS.DEEP_DIVE_MARKETING,
+    tool_choice: { type: "tool", name: "generate_marketing_plan" },
+    tools: [MARKETING_PLAN_TOOL],
+    messages: [
+      {
+        role: "user",
+        content: `Create a comprehensive 90-day launch marketing plan for:\n\n${context}\n\n${budgetNote}\n\nInclude:\n- 5-8 marketing channels ranked by priority with specific strategies for each\n- A 12-week content calendar with 3-4 posts per week across platforms, with specific topic ideas and caption drafts\n- Pre-launch, launch week, and ongoing tactics\n- 6-10 measurable KPIs with targets and measurement tools\n- Local SEO checklist specific to ${location}\n- Influencer outreach strategy with template and budget\n\nEvery recommendation must be specific to ${location} — reference local platforms, local food media, local influencers, and local events.`,
+      },
+    ],
+  });
+
+  const toolUse = response.content.find((b) => b.type === "tool_use");
+  if (!toolUse || toolUse.type !== "tool_use") {
+    throw new Error("Claude did not return structured marketing plan data");
+  }
+  return toolUse.input as MarketingPlan;
+}
+
 // ── Main orchestrator ───────────────────────────────────
 
 export async function generateDeepDiveContent(
@@ -421,17 +778,24 @@ export async function generateDeepDiveContent(
   brandNames: BrandNameSuggestion[];
   devilsAdvocate: DevilsAdvocate;
   validationRoadmap: ValidationRoadmap;
+  menuOrProduct: MenuOrProductData;
+  marketingPlan: MarketingPlan;
 }> {
-  const [planAndNames, devils, roadmap] = await Promise.all([
-    generateBusinessPlanAndNames(idea, category, location, filters),
-    generateDevilsAdvocate(idea, category, location, filters),
-    generateValidationRoadmap(idea, category, location, filters),
-  ]);
+  const [planAndNames, devils, roadmap, menuOrProduct, marketing] =
+    await Promise.all([
+      generateBusinessPlanAndNames(idea, category, location, filters),
+      generateDevilsAdvocate(idea, category, location, filters),
+      generateValidationRoadmap(idea, category, location, filters),
+      generateMenuOrProduct(idea, category, location, filters),
+      generateMarketingPlan(idea, category, location, filters),
+    ]);
 
   return {
     businessPlan: planAndNames.businessPlan,
     brandNames: planAndNames.brandNames,
     devilsAdvocate: devils,
     validationRoadmap: roadmap,
+    menuOrProduct,
+    marketingPlan: marketing,
   };
 }

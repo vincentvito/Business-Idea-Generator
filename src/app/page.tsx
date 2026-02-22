@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SectionBand } from "@/components/layout/section-band";
 import { Button } from "@/components/ui/button";
 import { Search, Lightbulb, ArrowRight, Sparkles } from "lucide-react";
+import { HeroImage } from "@/components/home/hero-image";
 import { StatsBanner } from "@/components/home/stats-banner";
 import { LiveFeed } from "@/components/home/live-feed";
 import { HowItWorks } from "@/components/home/how-it-works";
@@ -24,46 +25,54 @@ export default function HomePage() {
         className="bg-gradient-to-b from-purple-600 via-purple-700 to-purple-900 text-white"
         innerClassName="pt-16 pb-12 sm:pt-20 sm:pb-16"
       >
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm backdrop-blur-sm">
-            <Sparkles className="h-4 w-4 text-yellow-300" />
-            <span>AI-powered food business discovery</span>
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Left column: Content */}
+          <div className="text-center lg:text-left">
+            <div className="flex justify-center lg:justify-start mb-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm backdrop-blur-sm">
+                <Sparkles className="h-4 w-4 text-yellow-300" />
+                <span>AI-powered food business discovery</span>
+              </div>
+            </div>
+
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              Find Your Next
+              <br />
+              <span className="text-yellow-300">Food Business Idea</span>
+            </h1>
+
+            <p className="mt-4 max-w-xl text-lg text-purple-100 sm:text-xl">
+              From idea to launch: AI generates food business concepts complete
+              with a business plan, mood board, menu engineering, and brand
+              identity.
+            </p>
+
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+              <Button
+                asChild
+                size="lg"
+                className="h-12 px-8 text-base bg-white text-purple-700 hover:bg-purple-50 font-semibold shadow-lg"
+              >
+                <Link href="/discover">
+                  <Lightbulb className="mr-2 h-5 w-5" />
+                  Generate Food Business Ideas
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* Right column: Image with sticker tags */}
+          <div className="hidden lg:block">
+            <HeroImage />
           </div>
         </div>
-
-        <div className="flex flex-col items-center text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            Find Your Next
-            <br />
-            <span className="text-yellow-300">Food Business Idea</span>
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-purple-100 sm:text-xl">
-            Pick a food category and location. Our AI generates 50 food &
-            beverage ideas, validates them with real market data, and highlights
-            the golden opportunities.
-          </p>
-        </div>
-
-        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Button
-            asChild
-            size="lg"
-            className="h-12 px-8 text-base bg-white text-purple-700 hover:bg-purple-50 font-semibold shadow-lg"
-          >
-            <Link href="/discover">
-              <Lightbulb className="mr-2 h-5 w-5" />
-              Generate Food Business Ideas
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-
-        <SurpriseMe variant="hero" />
-        <LiveFeed variant="hero" />
       </SectionBand>
 
       {/* Band 2: Stats + Validate CTA (white) */}
       <SectionBand innerClassName="py-10">
+        <SurpriseMe />
+        <LiveFeed />
         <StatsBanner />
 
         <div className="mt-8 rounded-xl border-2 border-purple-100 bg-purple-50/50 p-6 sm:p-8">

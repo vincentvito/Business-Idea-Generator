@@ -6,6 +6,7 @@ import type {
   CompetitorMoatResult,
   TrendData,
   AmazonProductData,
+  LocalCompetitionData,
   ScoreData,
 } from "@/types/validation";
 
@@ -41,6 +42,10 @@ const SCORE_TOOL = {
       ecommerce_score: {
         type: "number",
         description: "eCommerce viability score 0-100, based on Amazon marketplace data (product count, pricing, ratings, reviews)",
+      },
+      local_competition_score: {
+        type: "number",
+        description: "Local competition score 0-100, based on Google Maps competitor density, ratings, and market gaps. Omit if no local data available.",
       },
       verdict: {
         type: "string",
@@ -82,7 +87,8 @@ export async function scoreIdea(
   metrics: KeywordMetrics[],
   moatResult: CompetitorMoatResult,
   trendData?: TrendData[],
-  amazonData?: AmazonProductData[]
+  amazonData?: AmazonProductData[],
+  localCompetition?: LocalCompetitionData | null
 ): Promise<ScoreData> {
   const client = getAnthropicClient();
 
@@ -127,6 +133,33 @@ export async function scoreIdea(
 ${topProduct ? `- Top product: "${topProduct.title}" — $${topProduct.price.toFixed(2)}, ${topProduct.reviews_count} reviews, ${topProduct.rating.toFixed(1)}/5 rating` : ""}`;
   }
 
+  // Build local competition summary
+  let localCompSummary = "No local competitor data available (no location specified or data unavailable).";
+  if (localCompetition) {
+    localCompSummary = `Local Competition (Google Maps):
+- Total local competitors found: ${localCompetition.total_competitors}
+- Average rating: ${localCompetition.avg_rating}/5 (${localCompetition.avg_reviews} avg reviews)
+- Saturation level: ${localCompetition.saturation_level}
+- Rating breakdown: ${localCompetition.rating_distribution.excellent} excellent, ${localCompetition.rating_distribution.good} good, ${localCompetition.rating_distribution.average} average, ${localCompetition.rating_distribution.poor} poor
+- Top competitors: ${localCompetition.top_competitors
+      .slice(0, 5)
+      .map(
+        (c) =>
+          `"${c.name}" (${c.rating}/5, ${c.reviews_count} reviews, ${c.price_level ?? "N/A"})`
+      )
+      .join(", ")}`;
+
+    if (localCompetition.detailed_competitors.length > 0) {
+      localCompSummary += "\n- Detailed competitor profiles:";
+      for (const d of localCompetition.detailed_competitors) {
+        localCompSummary += `\n  * "${d.name}": ${d.rating}/5 (${d.reviews_count} reviews), Category: ${d.category}, Photos: ${d.total_photos}, Claimed: ${d.is_claimed}`;
+        if (d.rating_distribution) {
+          localCompSummary += `, Stars: ${JSON.stringify(d.rating_distribution)}`;
+        }
+      }
+    }
+  }
+
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: 1024,
@@ -153,9 +186,11 @@ Overall competition: ${moatResult.moat_analysis.overall_competition_level}
 Biggest gap: ${moatResult.moat_analysis.biggest_gap}
 ${competitorSummary}
 
+${localCompSummary}
+
 ${amazonSummary}
 
-Provide scores from 0-100 for each dimension. Be data-driven — high search volume with low competition should score well. Low volume or extremely high competition should score poorly. Use trend data for the timing_score. Use Amazon data for the ecommerce_score. Consider CPC and Amazon pricing as proxies for commercial viability.`,
+Provide scores from 0-100 for each dimension. Be data-driven — high search volume with low competition should score well. Low volume or extremely high competition should score poorly. Use trend data for the timing_score. Use Amazon data for the ecommerce_score. Use local Google Maps data for the local_competition_score (omit if no local data). Consider CPC and Amazon pricing as proxies for commercial viability.`,
       },
     ],
   });

@@ -7,7 +7,16 @@ import {
   StyleSheet,
   renderToBuffer,
 } from "@react-pdf/renderer";
-import type { ScoreData, KeywordMetrics, CompetitorAnalysis, MoatAnalysis } from "@/types/validation";
+import type {
+  ScoreData,
+  KeywordMetrics,
+  CompetitorAnalysis,
+  MoatAnalysis,
+  TrendData,
+  AmazonProductData,
+  LocalCompetitionData,
+  KeywordExtractionResult,
+} from "@/types/validation";
 import type { DayZeroPlan } from "@/types/discovery";
 
 const styles = StyleSheet.create({
@@ -64,10 +73,14 @@ const styles = StyleSheet.create({
 
 interface ValidationPDFData {
   idea?: string;
+  keywords?: KeywordExtractionResult | null;
   scores?: ScoreData | null;
   metrics?: KeywordMetrics[] | null;
+  trends?: TrendData[] | null;
   competitors?: CompetitorAnalysis[] | null;
   moat?: MoatAnalysis | null;
+  amazon?: AmazonProductData[] | null;
+  localCompetition?: LocalCompetitionData | null;
 }
 
 function ValidationReport({ data }: { data: ValidationPDFData }) {
@@ -101,6 +114,18 @@ function ValidationReport({ data }: { data: ValidationPDFData }) {
                 <Text style={styles.scoreBig}>{scores.timing_score}</Text>
                 <Text style={styles.scoreLabel}>TIMING</Text>
               </View>
+              {scores.ecommerce_score != null && (
+                <View style={styles.scoreItem}>
+                  <Text style={styles.scoreBig}>{scores.ecommerce_score}</Text>
+                  <Text style={styles.scoreLabel}>eCOMMERCE</Text>
+                </View>
+              )}
+              {scores.local_competition_score != null && (
+                <View style={styles.scoreItem}>
+                  <Text style={styles.scoreBig}>{scores.local_competition_score}</Text>
+                  <Text style={styles.scoreLabel}>LOCAL</Text>
+                </View>
+              )}
             </View>
 
             <View style={styles.row}>
@@ -150,6 +175,100 @@ function ValidationReport({ data }: { data: ValidationPDFData }) {
           </>
         )}
 
+        {/* Search Trends */}
+        {data.trends && data.trends.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Search Trends</Text>
+            <View style={styles.table}>
+              <View style={styles.tableHeader}>
+                <Text style={{ width: "50%" }}>Keyword</Text>
+                <Text style={{ width: "25%", textAlign: "right" }}>Direction</Text>
+                <Text style={{ width: "25%", textAlign: "right" }}>YoY Growth</Text>
+              </View>
+              {data.trends.map((t, i) => (
+                <View key={i} style={styles.tableRow}>
+                  <Text style={{ width: "50%" }}>{t.keyword}</Text>
+                  <Text
+                    style={{
+                      width: "25%",
+                      textAlign: "right",
+                      color:
+                        t.trend_direction === "rising"
+                          ? "#16a34a"
+                          : t.trend_direction === "declining"
+                            ? "#dc2626"
+                            : "#666",
+                    }}
+                  >
+                    {t.trend_direction.charAt(0).toUpperCase() + t.trend_direction.slice(1)}
+                  </Text>
+                  <Text style={{ width: "25%", textAlign: "right" }}>
+                    {t.growth_percentage > 0 ? "+" : ""}{t.growth_percentage}%
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* Amazon Marketplace */}
+        {data.amazon && data.amazon.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Amazon Marketplace</Text>
+            {(() => {
+              const totalProducts = data.amazon.reduce((s, a) => s + a.total_products, 0);
+              const avgPrice =
+                data.amazon.reduce((s, a) => s + a.avg_price, 0) / data.amazon.length;
+              const avgRating =
+                data.amazon.reduce((s, a) => s + a.avg_rating, 0) / data.amazon.length;
+              const topProducts = data.amazon[0]?.top_products.slice(0, 3) ?? [];
+              return (
+                <>
+                  <View style={{ flexDirection: "row", gap: 24, marginBottom: 8 }}>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>Total Products:</Text>
+                      <Text style={styles.value}>{totalProducts.toLocaleString()}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>Avg Price:</Text>
+                      <Text style={styles.value}>${avgPrice.toFixed(0)}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.label}>Avg Rating:</Text>
+                      <Text style={styles.value}>{avgRating.toFixed(1)}/5</Text>
+                    </View>
+                  </View>
+                  {topProducts.length > 0 && (
+                    <View style={styles.table}>
+                      <View style={styles.tableHeader}>
+                        <Text style={{ width: "50%" }}>Top Product</Text>
+                        <Text style={{ width: "15%", textAlign: "right" }}>Price</Text>
+                        <Text style={{ width: "15%", textAlign: "right" }}>Rating</Text>
+                        <Text style={{ width: "20%", textAlign: "right" }}>Reviews</Text>
+                      </View>
+                      {topProducts.map((p, i) => (
+                        <View key={i} style={styles.tableRow}>
+                          <Text style={{ width: "50%" }}>{p.title.slice(0, 60)}</Text>
+                          <Text style={{ width: "15%", textAlign: "right" }}>
+                            ${p.price.toFixed(2)}
+                          </Text>
+                          <Text style={{ width: "15%", textAlign: "right" }}>
+                            {p.rating.toFixed(1)}
+                          </Text>
+                          <Text style={{ width: "20%", textAlign: "right" }}>
+                            {p.reviews_count.toLocaleString()}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </>
+              );
+            })()}
+          </>
+        )}
+
+        {/* Competitive Moat */}
         {data.moat && (
           <>
             <Text style={styles.sectionTitle}>Competitive Moat</Text>
@@ -165,6 +284,116 @@ function ValidationReport({ data }: { data: ValidationPDFData }) {
               <Text style={styles.label}>Positioning:</Text>
               <Text style={{ flex: 1 }}>{data.moat.recommended_positioning}</Text>
             </View>
+            {data.moat.unfair_advantages_to_build.length > 0 && (
+              <>
+                <Text style={{ fontSize: 9, color: "#666", marginTop: 6 }}>
+                  Unfair Advantages to Build:
+                </Text>
+                {data.moat.unfair_advantages_to_build.map((adv, i) => (
+                  <Text key={i} style={styles.bullet}>• {adv}</Text>
+                ))}
+              </>
+            )}
+          </>
+        )}
+
+        {/* Competitor Analysis */}
+        {data.competitors && data.competitors.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Competitor Analysis</Text>
+            {data.competitors.slice(0, 5).map((comp, i) => (
+              <View key={i} style={{ marginBottom: 10 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 2 }}>
+                  <Text style={{ fontFamily: "Helvetica-Bold", fontSize: 10 }}>
+                    {comp.name}
+                  </Text>
+                  <Text style={{ fontSize: 8, color: "#666", marginLeft: 8 }}>
+                    Authority: {comp.estimated_authority}
+                  </Text>
+                </View>
+                {comp.strengths.length > 0 && (
+                  <>
+                    <Text style={{ fontSize: 8, color: "#16a34a", marginTop: 2 }}>
+                      Strengths:
+                    </Text>
+                    {comp.strengths.map((s, j) => (
+                      <Text key={j} style={{ ...styles.bullet, fontSize: 8 }}>• {s}</Text>
+                    ))}
+                  </>
+                )}
+                {comp.weaknesses.length > 0 && (
+                  <>
+                    <Text style={{ fontSize: 8, color: "#dc2626", marginTop: 2 }}>
+                      Weaknesses:
+                    </Text>
+                    {comp.weaknesses.map((w, j) => (
+                      <Text key={j} style={{ ...styles.bullet, fontSize: 8 }}>• {w}</Text>
+                    ))}
+                  </>
+                )}
+                <Text style={{ fontSize: 8, color: "#2563eb", marginTop: 2 }}>
+                  Opportunity: {comp.differentiation_opportunity}
+                </Text>
+              </View>
+            ))}
+          </>
+        )}
+
+        {/* Local Competition */}
+        {data.localCompetition && (
+          <>
+            <Text style={styles.sectionTitle}>Local Competition (Google Maps)</Text>
+            <View style={{ flexDirection: "row", gap: 16, marginBottom: 8 }}>
+              <View style={styles.row}>
+                <Text style={styles.label}>Total Competitors:</Text>
+                <Text style={styles.value}>{data.localCompetition.total_competitors}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Avg Rating:</Text>
+                <Text style={styles.value}>
+                  {data.localCompetition.avg_rating.toFixed(1)}/5
+                </Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Saturation:</Text>
+                <Text style={styles.value}>
+                  {data.localCompetition.saturation_level}
+                </Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: "row", gap: 12, marginBottom: 8 }}>
+              <Text style={{ fontSize: 8, color: "#666" }}>
+                Rating Distribution — Excellent: {data.localCompetition.rating_distribution.excellent} | Good: {data.localCompetition.rating_distribution.good} | Average: {data.localCompetition.rating_distribution.average} | Poor: {data.localCompetition.rating_distribution.poor}
+              </Text>
+            </View>
+            {data.localCompetition.top_competitors.length > 0 && (
+              <View style={styles.table}>
+                <View style={styles.tableHeader}>
+                  <Text style={{ width: "35%" }}>Name</Text>
+                  <Text style={{ width: "15%", textAlign: "right" }}>Rating</Text>
+                  <Text style={{ width: "15%", textAlign: "right" }}>Reviews</Text>
+                  <Text style={{ width: "20%" }}>Category</Text>
+                  <Text style={{ width: "15%", textAlign: "right" }}>Price</Text>
+                </View>
+                {data.localCompetition.top_competitors.slice(0, 5).map((c, i) => (
+                  <View key={i} style={styles.tableRow}>
+                    <Text style={{ width: "35%" }}>{c.name.slice(0, 30)}</Text>
+                    <Text style={{ width: "15%", textAlign: "right" }}>
+                      {c.rating.toFixed(1)}
+                    </Text>
+                    <Text style={{ width: "15%", textAlign: "right" }}>
+                      {c.reviews_count.toLocaleString()}
+                    </Text>
+                    <Text style={{ width: "20%" }}>
+                      {(c.category ?? "—").slice(0, 18)}
+                    </Text>
+                    <Text style={{ width: "15%", textAlign: "right" }}>
+                      {c.price_level ?? "—"}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </>
         )}
 

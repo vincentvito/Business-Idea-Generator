@@ -88,10 +88,61 @@ export interface ScoreData {
   monetization_score: number;
   timing_score: number;
   ecommerce_score?: number;
+  local_competition_score?: number;
   verdict: "strong" | "promising" | "risky" | "weak";
   one_liner: string;
   key_risks: string[];
   next_steps: string[];
+}
+
+// ─── Local Competition (Google Maps) ───
+
+export interface LocalCompetitorData {
+  name: string;
+  rating: number;
+  reviews_count: number;
+  address: string;
+  phone: string | null;
+  category: string | null;
+  price_level: string | null;
+  url: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  is_claimed: boolean;
+}
+
+export interface LocalCompetitorDetail {
+  name: string;
+  rating: number;
+  reviews_count: number;
+  rating_distribution: Record<string, number> | null;
+  address: string;
+  phone: string | null;
+  url: string | null;
+  category: string | null;
+  additional_categories: string[];
+  price_level: string | null;
+  total_photos: number;
+  is_claimed: boolean;
+  attributes: Record<string, string[]> | null;
+  popular_times: Record<string, Array<{ time: number; popular_index: number }>> | null;
+}
+
+export interface LocalCompetitionData {
+  query: string;
+  location: string;
+  total_competitors: number;
+  avg_rating: number;
+  avg_reviews: number;
+  rating_distribution: {
+    excellent: number;
+    good: number;
+    average: number;
+    poor: number;
+  };
+  top_competitors: LocalCompetitorData[];
+  detailed_competitors: LocalCompetitorDetail[];
+  saturation_level: "low" | "moderate" | "high" | "very_high";
 }
 
 export interface ValidationResult {
@@ -102,5 +153,6 @@ export interface ValidationResult {
   competitors: CompetitorAnalysis[];
   moat: MoatAnalysis;
   amazon: AmazonProductData[];
+  localCompetition: LocalCompetitionData | null;
   scores: ScoreData;
 }

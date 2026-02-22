@@ -1,11 +1,12 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass";
 
 const DEV_USER_ID = "dev-user";
 
 function isBypassed() {
-  return process.env.BYPASS_AUTH === "true";
+  return AUTH_BYPASS_ENABLED;
 }
 
 async function getAuthUserId(): Promise<{ userId: string | null; tier: string }> {

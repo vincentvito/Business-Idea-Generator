@@ -183,3 +183,116 @@ export interface AmazonKeywordVolume {
   keyword: string;
   search_volume: number;
 }
+
+// ─── Google Maps SERP ───
+
+export interface GoogleMapsResult {
+  keyword: string;
+  type: string;
+  se_domain: string;
+  location_code: number;
+  language_code: string;
+  check_url: string;
+  datetime: string;
+  item_types: string[];
+  items_count: number;
+  items: GoogleMapsItem[];
+}
+
+export interface GoogleMapsItem {
+  type: string;
+  rank_group: number;
+  rank_absolute: number;
+  domain: string | null;
+  title: string;
+  url: string | null;
+  contact_url: string | null;
+  rating: GoogleMapsRating | null;
+  address: string | null;
+  address_info: {
+    borough: string | null;
+    address: string | null;
+    city: string | null;
+    zip: string | null;
+    region: string | null;
+    country_code: string | null;
+  } | null;
+  place_id: string | null;
+  phone: string | null;
+  main_image: string | null;
+  category: string | null;
+  additional_categories: string[] | null;
+  work_hours: Record<string, string[]> | null;
+  latitude: number | null;
+  longitude: number | null;
+  is_claimed: boolean | null;
+  cid: string | null;
+  price_level: string | null;
+}
+
+export interface GoogleMapsRating {
+  rating_type: string;
+  value: number;
+  votes_count: number;
+  rating_max: number;
+}
+
+// ─── Google My Business Info ───
+
+export interface GoogleBusinessInfoResult {
+  keyword: string;
+  type: string;
+  se_domain: string;
+  location_code: number;
+  language_code: string;
+  check_url: string;
+  datetime: string;
+  items_count: number;
+  items: GoogleBusinessInfoItem[];
+}
+
+export interface GoogleBusinessInfoItem {
+  type: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  category_ids: string[] | null;
+  additional_categories: string[] | null;
+  address: string | null;
+  address_info: {
+    borough: string | null;
+    address: string | null;
+    city: string | null;
+    zip: string | null;
+    region: string | null;
+    country_code: string | null;
+  } | null;
+  place_id: string | null;
+  phone: string | null;
+  url: string | null;
+  domain: string | null;
+  logo: string | null;
+  main_image: string | null;
+  total_photos: number | null;
+  snippet: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  is_claimed: boolean | null;
+  rating: {
+    rating_type: string;
+    value: number;
+    votes_count: number;
+    rating_max: number;
+    rating_distribution: Record<string, number> | null;
+  } | null;
+  price_level: string | null;
+  cid: string | null;
+  attributes: Record<string, string[]> | null;
+  popular_times: Record<string, Array<{ time: number; popular_index: number }>> | null;
+  people_also_search: Array<{
+    title: string;
+    cid: string;
+    feature_id: string;
+    rating: { value: number; votes_count: number } | null;
+  }> | null;
+}
