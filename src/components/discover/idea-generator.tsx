@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookmarkButton } from "@/components/shared/bookmark-button";
 import { ShareButton } from "@/components/shared/share-button";
-import { Star, ChevronDown, ChevronUp, ArrowRight, Lock } from "lucide-react";
+import { Star, ChevronDown, ChevronUp, ArrowRight, Lock, Sparkles } from "lucide-react";
 import type { RankedIdea } from "@/types/discovery";
 
 interface IdeaGeneratorProps {
@@ -14,6 +14,8 @@ interface IdeaGeneratorProps {
   selectedIdeaId: number | null;
   onGeneratePlan: () => void;
   isGeneratingPlan: boolean;
+  onDeepDive?: (idea: RankedIdea) => void;
+  isStartingDeepDive?: boolean;
   userTier?: string;
   dataSource?: "mock" | "live";
   totalGenerated?: number;
@@ -25,6 +27,8 @@ export function IdeaGenerator({
   selectedIdeaId,
   onGeneratePlan,
   isGeneratingPlan,
+  onDeepDive,
+  isStartingDeepDive,
   userTier = "FREE",
   dataSource,
   totalGenerated,
@@ -131,6 +135,8 @@ export function IdeaGenerator({
                           idea={idea}
                           onGeneratePlan={onGeneratePlan}
                           isGeneratingPlan={isGeneratingPlan}
+                          onDeepDive={onDeepDive}
+                          isStartingDeepDive={isStartingDeepDive}
                           userTier={userTier}
                         />
                       </td>
@@ -150,10 +156,19 @@ interface IdeaDetailProps {
   idea: RankedIdea;
   onGeneratePlan: () => void;
   isGeneratingPlan: boolean;
+  onDeepDive?: (idea: RankedIdea) => void;
+  isStartingDeepDive?: boolean;
   userTier?: string;
 }
 
-export function IdeaDetail({ idea, onGeneratePlan, isGeneratingPlan, userTier = "FREE" }: IdeaDetailProps) {
+export function IdeaDetail({
+  idea,
+  onGeneratePlan,
+  isGeneratingPlan,
+  onDeepDive,
+  isStartingDeepDive,
+  userTier = "FREE",
+}: IdeaDetailProps) {
   const canGeneratePlan = userTier !== "FREE";
   return (
     <div className="space-y-3 text-sm">
@@ -200,27 +215,52 @@ export function IdeaDetail({ idea, onGeneratePlan, isGeneratingPlan, userTier = 
           </Badge>
         ))}
       </div>
-      {canGeneratePlan ? (
-        <Button onClick={onGeneratePlan} disabled={isGeneratingPlan} className="mt-2">
-          {isGeneratingPlan ? (
-            <>
-              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Generating Plan...
-            </>
-          ) : (
-            <>
-              Generate Day Zero Plan <ArrowRight className="ml-2 h-4 w-4" />
-            </>
-          )}
-        </Button>
-      ) : (
-        <Button variant="outline" className="mt-2" asChild>
-          <a href="/pricing">
-            <Lock className="mr-2 h-4 w-4" />
-            Upgrade to Pro to unlock Day Zero Plans
-          </a>
-        </Button>
-      )}
+      <div className="flex flex-wrap gap-2 mt-2">
+        {canGeneratePlan ? (
+          <Button onClick={onGeneratePlan} disabled={isGeneratingPlan}>
+            {isGeneratingPlan ? (
+              <>
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Generating Plan...
+              </>
+            ) : (
+              <>
+                Generate Day Zero Plan <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        ) : (
+          <Button variant="outline" asChild>
+            <a href="/pricing">
+              <Lock className="mr-2 h-4 w-4" />
+              Upgrade to Pro to unlock Day Zero Plans
+            </a>
+          </Button>
+        )}
+
+        {onDeepDive && (
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeepDive(idea);
+            }}
+            disabled={isStartingDeepDive}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+          >
+            {isStartingDeepDive ? (
+              <>
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Starting...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Get Deep Dive — $29.99
+              </>
+            )}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

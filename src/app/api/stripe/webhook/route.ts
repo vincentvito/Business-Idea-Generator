@@ -28,6 +28,35 @@ export async function POST(request: Request) {
       const userId = checkoutSession.metadata?.userId;
       if (!userId) break;
 
+      // Handle deep dive one-time payment
+      if (checkoutSession.metadata?.type === "deep_dive") {
+        const deepDiveId = checkoutSession.metadata.deepDiveId;
+        if (deepDiveId) {
+          await prisma.deepDive.update({
+            where: { id: deepDiveId },
+            data: {
+              status: "GENERATING",
+              stripeSessionId: checkoutSession.id,
+              stripePaymentIntentId: checkoutSession.payment_intent as string,
+              paidAt: new Date(),
+              amountPaid: checkoutSession.amount_total ?? 2999,
+            },
+          });
+
+          // Fire-and-forget: trigger deep dive generation
+          const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+          fetch(`${baseUrl}/api/deep-dive/${deepDiveId}/generate`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-webhook-secret": process.env.INTERNAL_WEBHOOK_SECRET ?? "",
+            },
+          }).catch(console.error);
+        }
+        break;
+      }
+
+      // Handle subscription checkout
       const subResponse = await stripe.subscriptions.retrieve(
         checkoutSession.subscription as string
       );

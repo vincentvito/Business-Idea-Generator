@@ -28,6 +28,7 @@ model User {
   sessions     Session[]
   usageRecords UsageRecord[]
   savedIdeas   SavedIdea[]
+  deepDives    DeepDive[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,4 +104,54 @@ model SavedIdea {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+// ─── Deep Dive (one-time purchase) ───────────────────────
+
+enum DeepDiveStatus {
+  PENDING
+  GENERATING
+  IMAGES_PENDING
+  COMPLETED
+  FAILED
+}
+
+model DeepDive {
+  id     String          @id @default(cuid())
+  userId String
+  status DeepDiveStatus  @default(PENDING)
+
+  // Payment
+  stripeSessionId       String?  @unique
+  stripePaymentIntentId String?  @unique
+  paidAt                DateTime?
+  amountPaid            Int?     // cents (2999)
+
+  // Input
+  ideaTitle String
+  ideaData  Json   // Full RankedIdea
+  category  String
+  location  String
+  filters   Json?  // DiscoveryFilters
+
+  // Generated content
+  businessPlan      Json?
+  brandNames        Json?
+  devilsAdvocate    Json?
+  validationRoadmap Json?
+  moodboardImages   Json?    // string[] of image URLs
+  logoUrl           String?
+
+  // Replicate tracking
+  replicatePredictionIds Json? // string[]
+
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status])
 }

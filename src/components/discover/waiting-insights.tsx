@@ -13,6 +13,7 @@ import type { TrendingNiche } from "@/types/trending";
 interface WaitingInsightsProps {
   category: string;
   location: string;
+  variant?: "waiting" | "preview";
 }
 
 const TAB_LABELS = ["Top Ideas", "Trending", "Community Picks"] as const;
@@ -37,7 +38,7 @@ function competitionColor(level: string) {
   return colors[level] ?? "";
 }
 
-export function WaitingInsights({ category, location }: WaitingInsightsProps) {
+export function WaitingInsights({ category, location, variant = "waiting" }: WaitingInsightsProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [visible, setVisible] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval>>(undefined);
@@ -94,7 +95,9 @@ export function WaitingInsights({ category, location }: WaitingInsightsProps) {
   return (
     <div className="rounded-lg border bg-card p-4 animate-in fade-in-0 duration-500">
       <p className="text-sm text-muted-foreground mb-4">
-        While we generate your ideas, here&apos;s what&apos;s trending...
+        {variant === "preview"
+          ? "See what\u2019s trending across categories"
+          : "While we generate your ideas, here\u2019s what\u2019s trending..."}
       </p>
 
       <div
