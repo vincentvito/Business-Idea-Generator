@@ -2,23 +2,38 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
 
-export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
+const DEV_USER_ID = "dev-user";
 
+function isBypassed() {
+  return process.env.BYPASS_AUTH === "true";
+}
+
+async function getAuthUserId(): Promise<{ userId: string | null; tier: string }> {
+  if (isBypassed()) return { userId: DEV_USER_ID, tier: "PRO" };
+  const session = await auth();
+  if (!session?.user?.id) return { userId: null, tier: "FREE" };
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { tier: true },
   });
+  return { userId: session.user.id, tier: user?.tier ?? "FREE" };
+}
 
-  if (user?.tier === "FREE") {
+export async function GET() {
+  const { userId, tier } = await getAuthUserId();
+  if (!userId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (tier === "FREE") {
     return Response.json({ error: "Pro plan required" }, { status: 403 });
   }
 
+  if (isBypassed()) {
+    return Response.json({ ideas: [] });
+  }
+
   const ideas = await prisma.savedIdea.findMany({
-    where: { userId: session.user.id },
+    where: { userId },
     orderBy: { createdAt: "desc" },
     take: 100,
   });
@@ -27,17 +42,11 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const { userId, tier } = await getAuthUserId();
+  if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { tier: true },
-  });
-
-  if (user?.tier === "FREE") {
+  if (tier === "FREE") {
     return Response.json({ error: "Pro plan required" }, { status: 403 });
   }
 
@@ -48,9 +57,13 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Missing required fields" }, { status: 400 });
   }
 
+  if (isBypassed()) {
+    return Response.json({ idea: { id: "dev-idea", ideaTitle, category, score, source } }, { status: 201 });
+  }
+
   const idea = await prisma.savedIdea.create({
     data: {
-      userId: session.user.id,
+      userId,
       ideaTitle,
       ideaData: ideaData ?? {},
       category,
@@ -63,8 +76,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const { userId } = await getAuthUserId();
+  if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -75,9 +88,11 @@ export async function DELETE(request: NextRequest) {
     return Response.json({ error: "Missing idea ID" }, { status: 400 });
   }
 
-  await prisma.savedIdea.deleteMany({
-    where: { id: ideaId, userId: session.user.id },
-  });
+  if (!isBypassed()) {
+    await prisma.savedIdea.deleteMany({
+      where: { id: ideaId, userId },
+    });
+  }
 
   return Response.json({ success: true });
 }

@@ -22,13 +22,15 @@ const tierColors: Record<string, string> = {
 export function UserMenu() {
   const { data: session, status } = useSession();
 
-  if (status === "loading") {
+  const isBypassed = process.env.NEXT_PUBLIC_BYPASS_AUTH === "true";
+
+  if (!isBypassed && status === "loading") {
     return (
       <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
     );
   }
 
-  if (!session?.user) {
+  if (!isBypassed && !session?.user) {
     return (
       <Button variant="ghost" size="sm" asChild>
         <Link href="/login">Sign In</Link>
@@ -36,8 +38,8 @@ export function UserMenu() {
     );
   }
 
-  const tier = (session.user as { tier?: string }).tier ?? "FREE";
-  const initial = (session.user.email?.[0] ?? "U").toUpperCase();
+  const tier = isBypassed ? "PRO" : ((session?.user as { tier?: string }).tier ?? "FREE");
+  const initial = isBypassed ? "D" : (session?.user?.email?.[0] ?? "U").toUpperCase();
 
   return (
     <DropdownMenu>
@@ -53,7 +55,7 @@ export function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         <div className="px-2 py-1.5 text-sm">
-          <p className="font-medium truncate">{session.user.email}</p>
+          <p className="font-medium truncate">{isBypassed ? "dev@localhost" : session?.user?.email}</p>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
