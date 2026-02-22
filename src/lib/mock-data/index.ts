@@ -8,3 +8,4 @@ export { getCategoryStats } from "./categories";
 export { getCommentsForIdea } from "./comments";
 export { getPivotSuggestions } from "./pivots";
 export { getSuccessStories } from "./success-stories";
+export { getCustomerReviews } from "./reviews";

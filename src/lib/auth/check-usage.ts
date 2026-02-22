@@ -13,7 +13,7 @@ export interface UsageCheckResult {
 
 export async function checkUsageLimit(action: Action): Promise<UsageCheckResult> {
   // Dev bypass — skip auth + usage limits entirely
-  if (process.env.BYPASS_AUTH === "true") {
+  if (process.env.BYPASS_AUTH === "true" || process.env.NEXT_PUBLIC_BYPASS_AUTH === "true") {
     return { allowed: true, used: 0, limit: Infinity, tier: "PRO", userId: "dev-user", isAuthenticated: true };
   }
 
@@ -73,7 +73,7 @@ export async function recordUsage(
   action: string,
   metadata?: Record<string, unknown>
 ) {
-  if (process.env.BYPASS_AUTH === "true") return;
+  if (process.env.BYPASS_AUTH === "true" || process.env.NEXT_PUBLIC_BYPASS_AUTH === "true") return;
 
   await prisma.usageRecord.create({
     data: {

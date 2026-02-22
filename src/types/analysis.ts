@@ -26,3 +26,13 @@ export interface SuccessStory {
   timeline: { year: number; milestone: string }[];
   logoColor: string;
 }
+
+export interface CustomerReview {
+  id: string;
+  name: string;
+  role: string;
+  rating: number;
+  reviewText: string;
+  category: string;
+  avatarColor: string;
+}

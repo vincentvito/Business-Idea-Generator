@@ -1,22 +1,22 @@
-import { Lightbulb, BarChart3, Target } from "lucide-react";
+import { Compass, Sparkles, Target } from "lucide-react";
 
 const steps = [
   {
-    icon: Lightbulb,
-    title: "Describe Your Idea",
-    description: "Enter your business concept in plain language — no jargon needed.",
+    icon: Compass,
+    title: "Pick a Category",
+    description: "Choose from 20+ business categories and set your target location.",
     step: 1,
   },
   {
-    icon: BarChart3,
-    title: "We Analyze the Market",
-    description: "Real search volume, competitor landscape, and monetization signals.",
+    icon: Sparkles,
+    title: "AI Generates 50 Ideas",
+    description: "Our engine researches real search data and creates data-backed opportunities.",
     step: 2,
   },
   {
     icon: Target,
-    title: "Get Your Score",
-    description: "A data-driven score with risks, opportunities, and next steps.",
+    title: "Find Golden Opportunities",
+    description: "Ideas ranked by demand, competition, and monetization potential.",
     step: 3,
   },
 ];
