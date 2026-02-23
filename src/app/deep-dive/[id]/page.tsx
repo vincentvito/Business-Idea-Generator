@@ -5,6 +5,7 @@ import { PageContainer } from "@/components/layout/page-container";
 import { useDeepDive } from "@/hooks/use-deep-dive";
 import { DeepDiveLoading } from "@/components/deep-dive/loading";
 import { DeepDiveError } from "@/components/deep-dive/error";
+import { MarketDemandSection } from "@/components/deep-dive/market-demand-section";
 import { BusinessPlanSection } from "@/components/deep-dive/business-plan-section";
 import { BrandNamesSection } from "@/components/deep-dive/brand-names-section";
 import { MenuOrProductSection } from "@/components/deep-dive/menu-section";
@@ -94,6 +95,15 @@ export default function DeepDivePage({
       {/* Content sections */}
       {hasTextContent && (
         <div className="space-y-10">
+          {data.ideaData?.metrics && data.ideaData.metrics.length > 0 && (
+            <MarketDemandSection
+              metrics={data.ideaData.metrics}
+              location={data.location}
+              totalVolume={data.ideaData.totalVolume}
+              avgCompetition={data.ideaData.avgCompetition}
+              avgCPC={data.ideaData.avgCPC}
+            />
+          )}
           {data.businessPlan && (
             <BusinessPlanSection data={data.businessPlan} />
           )}

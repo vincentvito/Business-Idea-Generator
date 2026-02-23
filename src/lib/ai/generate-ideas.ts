@@ -32,7 +32,7 @@ const GENERATE_IDEAS_TOOL = {
               type: "array",
               items: { type: "string" },
               description:
-                "3-4 Google search keywords unique to THIS idea. RULES: (1) At least 2 must be specific long-tail phrases (3-5 words) that someone searching for THIS exact product/service would type. (2) At most 1 can be a broad keyword from the seed list. (3) NEVER reuse the same keyword across different ideas — every idea must have its own distinct set. Example for a yoga studio idea: 'hot yoga classes NYC', 'beginner yoga studio', 'yoga membership near me'.",
+                "3-4 Google Ads search keywords that REAL people already type. RULES: (1) At least 2 MUST come directly from the seed keyword list, or be minor variations (add the city name, add 'near me'). (2) At most 1 can be a related category keyword not in the seed list. (3) NEVER use the idea title, product name, or brand name as a keyword — only generic search terms people type BEFORE they know the business exists. (4) Keep keywords to 2-3 words; avoid 5+ word phrases which have no measurable search volume. (5) Some keyword overlap between ideas is fine — real keywords with volume are better than unique but invented ones. GOOD examples: 'energy bars Dubai', 'meal prep delivery', 'keto meal plan'. BAD examples: 'desert heat energy bites', 'halal keto meal kits', 'emirati spice subscription box'.",
             },
           },
           required: [
@@ -89,10 +89,11 @@ function buildSeedKeywordsContext(seedKeywords?: SeedKeyword[]): string {
   }
 
   context += `\n\nIMPORTANT KEYWORD RULES:
-- Use these keywords as INSPIRATION for the problems people are searching to solve.
-- Each idea MUST have 3-4 keywords that are UNIQUE to that idea. Do NOT reuse the same keyword across multiple ideas.
-- At least 2 keywords per idea must be specific long-tail phrases (3-5 words) that a real person would type to find THAT specific product/service.
-- At most 1 keyword per idea can be a broad term from the list above.
+- Each idea MUST have 3-4 keywords. At least 2 MUST come directly from the seed keyword list above (copy them exactly, or append the city/location name).
+- The remaining 1-2 keywords should be real Google search phrases that are CLOSE VARIATIONS of seed keywords (e.g., adding "near me", the location name, or swapping one word). Do NOT invent new compound phrases.
+- NEVER use the business name, product name, or brand name as a keyword. Keywords must be generic search terms people type BEFORE they know your business exists.
+- Some keyword overlap between ideas is OK — it is far better to reuse a real keyword than to invent a fake one that returns zero search volume.
+- Keep keywords to 2-3 words. Avoid phrases longer than 4 words — they rarely have measurable search volume.
 - Mix ideas across both high-volume markets AND niche opportunities.`;
 
   return context;
@@ -108,6 +109,9 @@ export async function generateIdeas(
   const filterConstraints = buildFilterConstraints(filters);
   const seedContext = buildSeedKeywordsContext(seedKeywords);
 
+  const isGlobal = !location;
+  const locationLabel = isGlobal ? "the global market" : location;
+
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: 3000,
@@ -117,18 +121,19 @@ export async function generateIdeas(
     messages: [
       {
         role: "user",
-        content: `Generate exactly 10 unique, specific food business ideas in the "${category}" category for ${location}.${filterConstraints}${seedContext}
+        content: `Generate exactly 10 unique, specific food business ideas in the "${category}" category for ${locationLabel}.${filterConstraints}${seedContext}
 
 Requirements:
-- Each idea must address a SPECIFIC pain point that exists in ${location}
+- Each idea must address a SPECIFIC pain point ${isGlobal ? "in this industry" : `that exists in ${location}`}
 - Include ideas across different sub-niches within ${category}
-${filters?.businessModel ? "" : "- Vary the business models: services, products, subscriptions, marketplaces, apps\n"}- Consider local culture, demographics, climate, and economy
+${filters?.businessModel ? "" : "- Vary the business models: services, products, subscriptions, marketplaces, apps\n"}${isGlobal ? "- Consider global market trends, scalability, and online distribution" : "- Consider local culture, demographics, climate, and economy"}
 - Mix of ideas: some targeting high-volume markets, some targeting underserved niches
 - For each idea, suggest 3-4 Google search keywords following these STRICT rules:
-  - At least 2 keywords must be SPECIFIC long-tail phrases (3-5 words) unique to THIS idea
-  - At most 1 keyword can be a broad term from the seed list
-  - NEVER reuse the exact same keyword across different ideas — each idea needs its OWN keywords
-  - Keywords must be things real people actually type into Google
+  - At least 2 keywords MUST come directly from the seed keyword list (copy them exactly, or add the location name)
+  - The remaining 1-2 should be close variations of seed keywords (swap one word, add "near me", etc.)
+  - NEVER use the idea title, product name, or brand name as a keyword — only generic search terms
+  - Some overlap between ideas is fine — real keywords with volume are better than unique but fake ones
+  - Keep keywords to 2-3 words. Avoid phrases longer than 4 words.
 - Number ideas from 1 to 10
 
 Make ideas specific and actionable, not generic. For example:

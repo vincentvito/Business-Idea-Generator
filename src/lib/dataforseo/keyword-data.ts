@@ -116,6 +116,7 @@ async function fetchFromDataForSEO(
     keywords,
     ...(locationCode ? { location_code: locationCode } : {}),
     language_code: "en",
+    search_partners: false,
     sort_by: "relevance",
   };
 

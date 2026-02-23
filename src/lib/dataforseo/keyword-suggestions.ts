@@ -129,6 +129,7 @@ async function fetchFromDataForSEO(
     keywords: seeds,
     ...(locationCode ? { location_code: locationCode } : {}),
     language_code: "en",
+    search_partners: false,
     limit: 50,
     sort_by: "search_volume",
   };

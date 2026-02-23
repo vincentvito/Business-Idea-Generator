@@ -26,7 +26,9 @@ Every idea must address a specific gap in the local food scene. Consider:
 - Supply chain: local sourcing, seasonal ingredients, supplier availability
 - Food trends: plant-based, functional foods, ethnic fusion, health-conscious, sustainable sourcing
 
-Prioritize ideas where search volume indicates real local demand and where the competitive landscape has gaps.`,
+Prioritize ideas where search volume indicates real local demand and where the competitive landscape has gaps.
+
+When suggesting search keywords for ideas, always prefer existing, well-known search terms over novel phrases. The keywords will be validated against Google Ads search volume data, so invented or overly specific phrases will return zero volume and hurt the idea's score.`,
 
   DEEP_DIVE_PLAN: `You are a senior food industry consultant who creates comprehensive, investor-grade business plans for food and beverage ventures. Your analysis is specific, data-informed, and actionable.
 

@@ -3,6 +3,7 @@ import { runDiscoveryPipeline } from "@/lib/pipeline/discovery-pipeline";
 import { createSSEStream } from "@/lib/pipeline/stream-helpers";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit/limiter";
 import { checkUsageLimit, recordUsage } from "@/lib/auth/check-usage";
+import { isLocationOptional } from "@/lib/constants";
 import type { DiscoveryFilters } from "@/types/discovery";
 
 export const maxDuration = 120;
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!location || typeof location !== "string") {
+  if (!isLocationOptional(category) && (!location || typeof location !== "string")) {
     return new Response(
       JSON.stringify({ error: "Please provide a location" }),
       { status: 400, headers: { "Content-Type": "application/json" } }
@@ -67,6 +68,6 @@ export async function POST(request: NextRequest) {
   await recordUsage(usage.userId!, "discover", { category, location });
 
   return createSSEStream((emit) =>
-    runDiscoveryPipeline(category, location, emit, filters)
+    runDiscoveryPipeline(category, location || "", emit, filters)
   );
 }

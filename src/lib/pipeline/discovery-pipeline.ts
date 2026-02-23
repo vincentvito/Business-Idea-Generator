@@ -7,6 +7,8 @@ import type { KeywordMetrics } from "@/types/validation";
 import type { IdeaStub, RankedIdea, DiscoveryFilters } from "@/types/discovery";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const randomDelay = (minMs: number, maxMs: number) =>
+  delay(minMs + Math.random() * (maxMs - minMs));
 
 export async function runDiscoveryPipeline(
   category: string,
@@ -22,7 +24,14 @@ export async function runDiscoveryPipeline(
   });
 
   const seeds = CATEGORY_SEED_KEYWORDS[category] ?? category.toLowerCase().split(/\s*[&,]\s*/);
-  const seedKeywords = await fetchSeedKeywords(seeds, location);
+  const seedKeywords = await fetchSeedKeywords(seeds, location || undefined);
+
+  // Kick off AI generation in the background while stages 1 & 2 show progress
+  const backgroundGeneration = generateIdeas(category, location, filters, seedKeywords);
+  backgroundGeneration.catch(() => {}); // prevent unhandled rejection warning
+
+  // Pad stage 1 to appear 10-15s
+  await randomDelay(10_000, 15_000);
 
   emit({
     type: "stage_complete",
@@ -37,7 +46,8 @@ export async function runDiscoveryPipeline(
     message: "Identifying trending niches and market gaps...",
   });
 
-  await delay(1500);
+  // Pad stage 2 to appear 10-15s
+  await randomDelay(10_000, 15_000);
 
   emit({
     type: "stage_complete",
@@ -46,13 +56,14 @@ export async function runDiscoveryPipeline(
   });
 
   // Stage 3: Generate Ideas (Claude, seeded with real keywords)
+  // Generation has been running in background during stages 1 & 2
   emit({
     type: "stage_start",
     stage: "generation",
     message: "Crafting data-driven ideas based on market signals...",
   });
 
-  const allIdeas = await generateIdeas(category, location, filters, seedKeywords);
+  const allIdeas = await backgroundGeneration;
   emit({
     type: "stage_complete",
     stage: "generation",
@@ -71,7 +82,38 @@ export async function runDiscoveryPipeline(
     keywords: idea.suggested_keywords,
   }));
 
-  const { metricsMap, source: metricsSource } = await fetchBatchKeywordMetrics(keywordGroups, location);
+  let { metricsMap, source: metricsSource } = await fetchBatchKeywordMetrics(keywordGroups, location || undefined);
+
+  // Safety net: if >70% of ideas got all-zero volume, enrich with seed keywords
+  const zeroVolumeCount = keywordGroups.filter((g) => {
+    const m = metricsMap.get(g.ideaId) ?? [];
+    return m.length === 0 || m.every((k) => k.avg_monthly_searches === 0);
+  }).length;
+
+  if (zeroVolumeCount > keywordGroups.length * 0.7 && seedKeywords.length > 0) {
+    const topSeeds = seedKeywords
+      .sort((a, b) => b.search_volume - a.search_volume)
+      .slice(0, 20)
+      .map((sk) => sk.keyword);
+
+    for (let i = 0; i < keywordGroups.length; i++) {
+      const group = keywordGroups[i];
+      const existing = metricsMap.get(group.ideaId) ?? [];
+      if (existing.length === 0 || existing.every((k) => k.avg_monthly_searches === 0)) {
+        const idx = (i * 2) % topSeeds.length;
+        const fallbacks = [topSeeds[idx], topSeeds[(idx + 1) % topSeeds.length]];
+        group.keywords.push(...fallbacks);
+        // Also update the idea objects so fallback keywords appear in results
+        const idea = allIdeas.find((idea) => idea.id === group.ideaId);
+        if (idea) idea.suggested_keywords.push(...fallbacks);
+      }
+    }
+
+    const enriched = await fetchBatchKeywordMetrics(keywordGroups, location || undefined);
+    metricsMap = enriched.metricsMap;
+    metricsSource = enriched.source;
+  }
+
   emit({
     type: "stage_complete",
     stage: "volume_check",
@@ -142,15 +184,29 @@ function scoreIdeas(
       metrics.reduce((sum, m) => sum + m.high_top_of_page_bid, 0) /
       (metrics.length || 1);
 
+    // How many keywords returned real data (volume > 0)?
+    const keywordsWithData = metrics.filter((m) => m.avg_monthly_searches > 0).length;
+    const dataConfidence = metrics.length > 0 ? keywordsWithData / metrics.length : 0;
+
     // Goldilocks: Decent avg volume (>500/mo) + Low competition (<40/100) + Decent CPC (>$1)
     const isGoldilocks =
       totalVolume > 500 && avgCompetition < 40 && avgCPC > 1;
 
+    // When volume=0 and competition=0, treat competition as "unknown" (50)
+    // rather than "best possible" (0) — 0 means no data, not low competition
+    const effectiveCompetition =
+      totalVolume === 0 && avgCompetition === 0 ? 50 : avgCompetition;
+
     // Composite score: log-scale volume + competition + CPC
-    const score =
+    let score =
       Math.log10(totalVolume + 1) * 15 * 0.4 +
-      (100 - avgCompetition) * 0.35 +
+      (100 - effectiveCompetition) * 0.35 +
       avgCPC * 10 * 0.25;
+
+    // Discount score when keywords lack real data — ideas WITH volume always rank higher
+    if (dataConfidence < 1) {
+      score = score * (0.5 + 0.5 * dataConfidence);
+    }
 
     return {
       ...idea,

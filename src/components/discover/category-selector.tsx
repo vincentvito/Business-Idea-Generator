@@ -18,6 +18,7 @@ import {
   DELIVERY_MODELS,
   TIME_TO_FIRST_SALE,
   CUISINE_SPECIALTIES,
+  isLocationOptional,
 } from "@/lib/constants";
 import {
   ChevronDown,
@@ -103,9 +104,11 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
   const [timeToRevenue, setTimeToRevenue] = useState("");
   const [cuisineSpecialty, setCuisineSpecialty] = useState("");
 
+  const locationOptional = isLocationOptional(category);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (category && location.trim()) {
+    if (category && (locationOptional || location.trim())) {
       const filters: DiscoveryFilters = {};
       if (budget) filters.budget = budget;
       if (businessModel) filters.businessModel = businessModel;
@@ -218,13 +221,13 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
       {/* Location */}
       <div>
         <label htmlFor="location" className="text-sm font-medium text-muted-foreground">
-          Location
+          Location{locationOptional ? " (optional)" : ""}
         </label>
         <Input
           id="location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="e.g., Milan, Italy"
+          placeholder={locationOptional ? "e.g., Milan, Italy (or leave empty for global)" : "e.g., Milan, Italy"}
           disabled={isRunning}
           className="mt-1.5"
         />
@@ -339,7 +342,7 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
       <div className="flex gap-2">
         <Button
           type="submit"
-          disabled={!category || !location.trim() || isRunning}
+          disabled={!category || (!locationOptional && !location.trim()) || isRunning}
         >
           {isRunning ? (
             <>

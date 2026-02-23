@@ -41,6 +41,16 @@ export function isMenuCategory(category: string): boolean {
   return (MENU_CATEGORIES as readonly string[]).includes(category);
 }
 
+export const LOCATION_OPTIONAL_CATEGORIES = [
+  "Food Tech & SaaS",
+  "Food Product & Packaged Goods",
+  "Beverage Brand",
+] as const;
+
+export function isLocationOptional(category: string): boolean {
+  return (LOCATION_OPTIONAL_CATEGORIES as readonly string[]).includes(category);
+}
+
 export const POPULAR_LOCATIONS = [
   "New York, USA",
   "Los Angeles, USA",
