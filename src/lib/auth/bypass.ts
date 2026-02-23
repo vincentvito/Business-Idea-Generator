@@ -1,5 +1,5 @@
 // Controlled via env vars: set BYPASS_AUTH=true or NEXT_PUBLIC_BYPASS_AUTH=true
-const HARDCODED_DEV_BYPASS = false;
+const HARDCODED_DEV_BYPASS = true;
 
 export const AUTH_BYPASS_ENABLED =
   HARDCODED_DEV_BYPASS ||
