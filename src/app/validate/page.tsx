@@ -22,6 +22,7 @@ import {
   Users,
   TrendingUp,
   CheckCircle,
+  AlertTriangle,
 } from "lucide-react";
 import type { PipelineEvent } from "@/types/pipeline";
 import type {
@@ -271,6 +272,23 @@ export default function ValidatePage() {
           <div className="mb-6 max-w-md">
             <UpgradePrompt feature="Unlimited validations" requiredTier="PRO" type="usage_limit" />
           </div>
+        )}
+
+        {error && errorType !== "auth_required" && errorType !== "usage_limit" && (
+          <Card className="mb-4 border-destructive/50 bg-destructive/5">
+            <CardContent className="flex items-start gap-3 py-4">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="h-4 w-4 text-destructive" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-medium text-sm text-destructive">Something went wrong</p>
+                <p className="mt-1 text-sm text-muted-foreground">{error}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Please check your inputs and try again. If the problem persists, the service may be temporarily unavailable.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         <Card>

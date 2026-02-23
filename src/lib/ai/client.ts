@@ -27,7 +27,7 @@ function resolveApiKey(): string {
 
   if (!apiKey) {
     throw new Error(
-      "ANTHROPIC_API_KEY is missing. Ensure the key is set in .env.local and restart: rm -rf .next && npm run dev"
+      "ANTHROPIC_API_KEY is missing. Set it in your environment variables (Vercel dashboard or .env.local for local dev)."
     );
   }
 

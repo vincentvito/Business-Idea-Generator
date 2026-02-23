@@ -20,7 +20,7 @@ export function createSSEStream(
           type: "error",
           stage: "pipeline",
           message: isConfigError
-            ? "AI service is not configured. Try restarting the dev server: rm -rf .next && npm run dev"
+            ? "AI service is not configured. Set ANTHROPIC_API_KEY in your environment variables."
             : message,
           recoverable: false,
         });
