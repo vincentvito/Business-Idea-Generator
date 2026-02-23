@@ -146,7 +146,7 @@ export function DataSources() {
   return (
     <div>
       <h2 className="text-center text-xl font-bold mb-2">
-        Powered by Real Market Data
+        Powered by AI and Real Market Data
       </h2>
       <p className="text-center text-sm text-muted-foreground mb-8 max-w-xl mx-auto">
         Every food business idea is validated against multiple authoritative data
