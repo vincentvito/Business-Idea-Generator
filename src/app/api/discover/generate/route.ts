@@ -5,7 +5,7 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limit/limiter";
 import { checkUsageLimit, recordUsage } from "@/lib/auth/check-usage";
 import type { DiscoveryFilters } from "@/types/discovery";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 export async function POST(request: NextRequest) {
   const body = await request.json();

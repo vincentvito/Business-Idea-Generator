@@ -197,12 +197,27 @@ export function useSSEStream<TInput, TResult>(
         // Final flush of any remaining buffered events
         flushEvents();
 
-        // Stream complete
-        setState((prev) => ({
-          ...prev,
-          isRunning: false,
-          result: transformResult(prev.events),
-        }));
+        // Stream complete — check if an error was emitted during the stream
+        setState((prev) => {
+          // If the stream had an error event, don't overwrite it
+          if (prev.error) {
+            return { ...prev, isRunning: false };
+          }
+          // If no pipeline_complete event arrived, the stream was likely cut off (timeout)
+          const hasCompleted = prev.events.some((e) => e.type === "pipeline_complete");
+          if (!hasCompleted && prev.events.length > 0) {
+            return {
+              ...prev,
+              isRunning: false,
+              error: "The request timed out. Please try again — it may take a moment to generate results.",
+            };
+          }
+          return {
+            ...prev,
+            isRunning: false,
+            result: transformResult(prev.events),
+          };
+        });
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") return;
         setState((prev) => ({

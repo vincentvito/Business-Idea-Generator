@@ -4,7 +4,7 @@ import { createSSEStream } from "@/lib/pipeline/stream-helpers";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit/limiter";
 import { checkUsageLimit, recordUsage } from "@/lib/auth/check-usage";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
