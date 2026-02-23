@@ -108,8 +108,8 @@ const dataSources: DataSource[] = [
     metric: "AI-powered scoring engine",
     metricIcon: Sparkles,
     icon: Brain,
-    color: "text-purple-500",
-    accentBg: "bg-purple-50",
+    color: "text-[#1A4A3A]",
+    accentBg: "bg-[#E8F0ED]",
   },
   {
     name: "Replicate AI",
@@ -158,7 +158,7 @@ export function DataSources() {
         {aggregateStats.map((stat) => (
           <span
             key={stat.label}
-            className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 border border-purple-200 text-purple-700 px-3.5 py-1.5 text-xs font-medium"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F0ED] border border-[#B8D1C4] text-[#1A4A3A] px-3.5 py-1.5 text-xs font-medium"
           >
             <stat.icon className="h-3.5 w-3.5" />
             {stat.label}
@@ -202,7 +202,7 @@ export function DataSources() {
               className={`text-xs font-semibold mt-3 flex items-center gap-1 ${
                 source.comingSoon
                   ? "text-muted-foreground"
-                  : "text-purple-600"
+                  : "text-[#1A4A3A]"
               }`}
             >
               <source.metricIcon className="h-3 w-3" />

@@ -21,9 +21,9 @@ export default function HomePage() {
 
   return (
     <main>
-      {/* Band 1: Idea Generator Hero (purple gradient) */}
+      {/* Band 1: Idea Generator Hero (deep forest gradient) */}
       <SectionBand
-        className="bg-gradient-to-b from-purple-600 via-purple-700 to-purple-900 text-white"
+        className="bg-gradient-to-b from-[#145C42] via-[#0F4A35] to-[#0D2C24] text-white"
         innerClassName="pt-16 pb-12 sm:pt-20 sm:pb-16"
       >
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -32,12 +32,12 @@ export default function HomePage() {
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Launch your
               <br />
-              <span className="text-yellow-300">
+              <span className="text-[#FFC859]">
                 <RotatingText />
               </span>
             </h1>
 
-            <p className="mt-4 max-w-xl text-lg text-purple-100 sm:text-xl">
+            <p className="mt-4 max-w-xl text-lg text-white/70 sm:text-xl">
               Stop guessing what to launch. We scan real search demand and
               competitor gaps to find food business ideas people are already
               looking for.
@@ -47,7 +47,7 @@ export default function HomePage() {
               <Button
                 asChild
                 size="lg"
-                className="h-12 px-8 text-base bg-white text-purple-700 hover:bg-purple-50 font-semibold shadow-lg"
+                className="h-12 px-8 text-base bg-[#E85D2A] text-white hover:bg-[#C24A1E] font-semibold shadow-lg"
               >
                 <Link href="/discover">
                   <Lightbulb className="mr-2 h-5 w-5" />
@@ -79,7 +79,7 @@ export default function HomePage() {
         <LiveFeed />
         <StatsBanner />
 
-        <div className="mt-8 rounded-xl border-2 border-purple-100 bg-purple-50/50 p-6 sm:p-8">
+        <div className="mt-8 rounded-xl border-2 border-[#D4E3DA] bg-[#E8F0ED]/50 p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shrink-0">

@@ -122,8 +122,8 @@ const FEATURES = [
   },
   {
     icon: Target,
-    color: "text-purple-500",
-    bg: "bg-purple-50",
+    color: "text-[#1A4A3A]",
+    bg: "bg-[#E8F0ED]",
     title: "Viability Score",
     desc: "An overall score with breakdown across key dimensions",
   },
@@ -131,7 +131,7 @@ const FEATURES = [
 
 const MINI_STATS = [
   { label: "Food Ideas Validated", value: "8,412", icon: CheckCircle, color: "text-green-500" },
-  { label: "Average Score", value: "72/100", icon: Target, color: "text-purple-500" },
+  { label: "Average Score", value: "72/100", icon: Target, color: "text-[#1A4A3A]" },
 ] as const;
 
 export default function ValidatePage() {
@@ -225,14 +225,14 @@ export default function ValidatePage() {
 
   return (
     <main>
-      {/* Band 1: Purple Gradient Hero */}
+      {/* Band 1: Deep Forest Gradient Hero */}
       <SectionBand
-        className="bg-gradient-to-b from-purple-600 via-purple-700 to-purple-900 text-white"
+        className="bg-gradient-to-b from-[#145C42] via-[#0F4A35] to-[#0D2C24] text-white"
         innerClassName="pt-10 pb-8 sm:pt-12 sm:pb-10"
       >
         <div className="flex justify-center mb-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm backdrop-blur-sm">
-            <ShieldCheck className="h-4 w-4 text-yellow-300" />
+            <ShieldCheck className="h-4 w-4 text-[#FFC107]" />
             <span>AI-powered food business validation</span>
           </div>
         </div>
@@ -240,9 +240,9 @@ export default function ValidatePage() {
         <div className="flex flex-col items-center text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             60-Second{" "}
-            <span className="text-yellow-300">Reality Check</span>
+            <span className="text-[#FFC859]">Reality Check</span>
           </h1>
-          <p className="mt-3 max-w-2xl text-base text-purple-100 sm:text-lg">
+          <p className="mt-3 max-w-2xl text-base text-white/70 sm:text-lg">
             Enter your food business idea and get instant validation backed by real
             search data, trend analysis, and competitor intelligence.
           </p>
@@ -301,10 +301,10 @@ export default function ValidatePage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
               {HOW_IT_WORKS.map((s) => (
                 <div key={s.step} className="flex flex-col items-center">
-                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 text-purple-700 font-bold text-sm">
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#D4E3DA] text-[#0D2C24] font-bold text-sm">
                     {s.step}
                   </div>
-                  <s.icon className="h-5 w-5 text-purple-600 mb-2" />
+                  <s.icon className="h-5 w-5 text-[#1A4A3A] mb-2" />
                   <h3 className="font-medium text-sm">{s.title}</h3>
                   <p className="text-xs text-muted-foreground mt-1">{s.desc}</p>
                 </div>
@@ -340,7 +340,7 @@ export default function ValidatePage() {
               </div>
               <div className="md:col-span-2 space-y-4">
                 <h2 className="font-semibold mb-3 flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-purple-600" />
+                  <BarChart3 className="h-4 w-4 text-[#1A4A3A]" />
                   Platform Stats
                 </h2>
                 <div className="grid grid-cols-2 gap-3">

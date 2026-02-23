@@ -49,71 +49,71 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --background: oklch(0.978 0.005 90);          /* #F9F7F2 Parchment */
+  --foreground: oklch(0.25 0.008 55);            /* #2D2926 Charcoal */
+  --card: oklch(1 0 0);                          /* White cards */
+  --card-foreground: oklch(0.25 0.008 55);       /* Charcoal */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.25 0.008 55);    /* Charcoal */
+  --primary: oklch(0.62 0.19 42);                /* #E85D2A Flame Orange */
+  --primary-foreground: oklch(1 0 0);            /* White */
+  --secondary: oklch(0.95 0.015 165);            /* #E8F0ED Pine Mist */
+  --secondary-foreground: oklch(0.35 0.06 165);  /* #1A4A3A Forest */
+  --muted: oklch(0.95 0.015 165);                /* #E8F0ED Pine Mist */
+  --muted-foreground: oklch(0.556 0 0);          /* Medium gray for readability */
+  --accent: oklch(0.90 0.025 165);               /* #D4E3DA Sage Tint */
+  --accent-foreground: oklch(0.22 0.035 165);    /* #0D2C24 Deep Forest */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.92 0.01 165);                /* Light sage border */
+  --input: oklch(0.92 0.01 165);
+  --ring: oklch(0.45 0.06 165);                  /* Forest ring */
+  --chart-1: oklch(0.62 0.19 42);                /* Flame Orange */
+  --chart-2: oklch(0.50 0.10 165);               /* Forest Green */
+  --chart-3: oklch(0.35 0.06 165);               /* Dark Forest */
+  --chart-4: oklch(0.83 0.17 85);                /* Golden Honey */
+  --chart-5: oklch(0.70 0.15 35);                /* Warm Coral */
+  --sidebar: oklch(0.978 0.005 90);              /* Parchment */
+  --sidebar-foreground: oklch(0.25 0.008 55);    /* Charcoal */
+  --sidebar-primary: oklch(0.22 0.035 165);      /* Deep Forest */
+  --sidebar-primary-foreground: oklch(1 0 0);    /* White */
+  --sidebar-accent: oklch(0.95 0.015 165);       /* Pine Mist */
+  --sidebar-accent-foreground: oklch(0.22 0.035 165); /* Deep Forest */
+  --sidebar-border: oklch(0.92 0.01 165);
+  --sidebar-ring: oklch(0.45 0.06 165);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --background: oklch(0.18 0.02 165);            /* Dark forest bg */
+  --foreground: oklch(0.95 0.005 90);            /* Parchment-ish light */
+  --card: oklch(0.22 0.025 165);                 /* Slightly lighter dark forest */
+  --card-foreground: oklch(0.95 0.005 90);
+  --popover: oklch(0.22 0.025 165);
+  --popover-foreground: oklch(0.95 0.005 90);
+  --primary: oklch(0.65 0.19 42);                /* Flame Orange (slightly brighter for dark) */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.28 0.03 165);
+  --secondary-foreground: oklch(0.95 0.005 90);
+  --muted: oklch(0.28 0.03 165);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.28 0.03 165);
+  --accent-foreground: oklch(0.95 0.005 90);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.50 0.08 165);
+  --chart-1: oklch(0.65 0.19 42);                /* Flame Orange */
+  --chart-2: oklch(0.60 0.12 165);               /* Bright Forest */
+  --chart-3: oklch(0.83 0.17 85);                /* Golden Honey */
+  --chart-4: oklch(0.70 0.15 35);                /* Warm Coral */
+  --chart-5: oklch(0.55 0.10 165);               /* Muted Forest */
+  --sidebar: oklch(0.22 0.025 165);
+  --sidebar-foreground: oklch(0.95 0.005 90);
+  --sidebar-primary: oklch(0.65 0.19 42);        /* Flame Orange */
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.28 0.03 165);
+  --sidebar-accent-foreground: oklch(0.95 0.005 90);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.50 0.08 165);
 }
 
 @layer base {

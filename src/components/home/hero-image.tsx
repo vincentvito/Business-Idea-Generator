@@ -32,7 +32,7 @@ const stickers: Sticker[] = [
     rotation: "4deg",
     position: "top-12 -right-8",
     delay: "100ms",
-    color: "text-purple-500",
+    color: "text-[#1A4A3A]",
   },
   {
     icon: Palette,

@@ -17,7 +17,7 @@ import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass-client";
 const tierColors: Record<string, string> = {
   FREE: "bg-muted text-muted-foreground",
   PRO: "bg-blue-100 text-blue-700",
-  BUSINESS: "bg-purple-100 text-purple-700",
+  BUSINESS: "bg-[#E8F0ED] text-[#0D2C24]",
 };
 
 export function UserMenu() {

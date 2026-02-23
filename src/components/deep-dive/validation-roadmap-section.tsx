@@ -16,7 +16,7 @@ const CATEGORY_CONFIG: Record<string, { icon: typeof Search; color: string; bg: 
   research: { icon: Search, color: "text-blue-600", bg: "bg-blue-100" },
   build: { icon: Hammer, color: "text-orange-600", bg: "bg-orange-100" },
   launch: { icon: Rocket, color: "text-green-600", bg: "bg-green-100" },
-  measure: { icon: BarChart3, color: "text-purple-600", bg: "bg-purple-100" },
+  measure: { icon: BarChart3, color: "text-[#1A4A3A]", bg: "bg-[#E8F0ED]" },
 };
 
 interface ValidationRoadmapSectionProps {

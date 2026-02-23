@@ -245,7 +245,7 @@ export function IdeaDetail({
               onDeepDive(idea);
             }}
             disabled={isStartingDeepDive}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+            className="bg-[#0D2C24] hover:bg-[#145C42] text-white"
           >
             {isStartingDeepDive ? (
               <>

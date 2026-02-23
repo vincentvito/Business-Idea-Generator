@@ -36,7 +36,7 @@ export function SurpriseMe({ variant = "default" }: SurpriseMeProps) {
           onClick={handleSurprise}
           variant="ghost"
           size="lg"
-          className="gap-2 text-purple-100 hover:text-white hover:bg-white/10"
+          className="gap-2 text-white/70 hover:text-white hover:bg-white/10"
         >
           <Shuffle className="h-4 w-4" />
           or try a random idea
@@ -57,20 +57,20 @@ export function SurpriseMe({ variant = "default" }: SurpriseMeProps) {
           }`}
         >
           <h3 className="font-bold mb-1">{idea.title}</h3>
-          <p className={`text-sm mb-3 ${isHero ? "text-purple-100" : "text-muted-foreground"}`}>
+          <p className={`text-sm mb-3 ${isHero ? "text-white/70" : "text-muted-foreground"}`}>
             {idea.oneLiner}
           </p>
 
           <div className="flex flex-wrap gap-2 mb-3">
             <Badge
               variant="outline"
-              className={isHero ? "border-white/30 text-purple-100" : ""}
+              className={isHero ? "border-white/30 text-white/70" : ""}
             >
               {idea.category}
             </Badge>
             <Badge
               variant="secondary"
-              className={isHero ? "bg-white/10 text-purple-100 border-0" : ""}
+              className={isHero ? "bg-white/10 text-white/70 border-0" : ""}
             >
               {idea.location}
             </Badge>
@@ -97,7 +97,7 @@ export function SurpriseMe({ variant = "default" }: SurpriseMeProps) {
               onClick={handleSurprise}
               size="sm"
               variant="ghost"
-              className={isHero ? "text-purple-100 hover:text-white hover:bg-white/10" : ""}
+              className={isHero ? "text-white/70 hover:text-white hover:bg-white/10" : ""}
             >
               <Shuffle className="mr-1 h-3 w-3" /> Another
             </Button>

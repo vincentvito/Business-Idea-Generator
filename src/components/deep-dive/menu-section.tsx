@@ -41,7 +41,7 @@ const PRODUCT_CLASSIFICATION: Record<
   hero: { label: "Hero", color: "text-yellow-700", bg: "bg-yellow-100" },
   cash_cow: { label: "Cash Cow", color: "text-green-700", bg: "bg-green-100" },
   growth: { label: "Growth", color: "text-blue-700", bg: "bg-blue-100" },
-  niche: { label: "Niche", color: "text-purple-700", bg: "bg-purple-100" },
+  niche: { label: "Niche", color: "text-[#0D2C24]", bg: "bg-[#E8F0ED]" },
 };
 
 function foodCostColor(percent: number): string {

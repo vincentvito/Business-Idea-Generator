@@ -66,7 +66,7 @@ export function LiveFeed({ variant = "default" }: LiveFeedProps) {
           visible ? "opacity-100" : "opacity-0"
         }`}
       >
-        <span className={isHero ? "text-purple-200" : "text-muted-foreground"}>
+        <span className={isHero ? "text-white/60" : "text-muted-foreground"}>
           Someone just validated
         </span>
         <span className={`font-medium truncate max-w-[300px] ${isHero ? "text-white" : ""}`}>
@@ -75,7 +75,7 @@ export function LiveFeed({ variant = "default" }: LiveFeedProps) {
         <Badge className={`text-xs ${verdictColor(item.verdict, isHero)}`}>
           Score: {item.score}
         </Badge>
-        <span className={`text-xs ${isHero ? "text-purple-300" : "text-muted-foreground"}`}>
+        <span className={`text-xs ${isHero ? "text-white/50" : "text-muted-foreground"}`}>
           {item.timeAgo}
         </span>
       </div>

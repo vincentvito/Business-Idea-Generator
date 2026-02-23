@@ -26,7 +26,7 @@ export function BusinessPlanSection({ data }: BusinessPlanSectionProps) {
   return (
     <section className="space-y-4">
       <h2 className="text-xl font-bold flex items-center gap-2">
-        <FileText className="h-5 w-5 text-purple-600" />
+        <FileText className="h-5 w-5 text-[#1A4A3A]" />
         Business Plan
       </h2>
 

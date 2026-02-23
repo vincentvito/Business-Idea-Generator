@@ -76,7 +76,7 @@ export default function DeepDivePage({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <h1 className="text-2xl font-bold">{data.ideaTitle}</h1>
-              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+              <Badge variant="outline" className="bg-[#E8F0ED] text-[#0D2C24] border-[#B8D1C4]">
                 Deep Dive
               </Badge>
             </div>

@@ -5,7 +5,7 @@ const stats = [
   { label: "Ideas Validated", value: STATS_DATA.ideasValidated.toLocaleString(), icon: CheckCircle2, color: "text-green-500" },
   { label: "Goldilocks Found", value: STATS_DATA.goldilocksFound.toLocaleString(), icon: Star, color: "text-yellow-500" },
   { label: "Avg Score", value: STATS_DATA.avgScore.toString(), icon: TrendingUp, color: "text-blue-500" },
-  { label: "Categories", value: STATS_DATA.categoriesExplored.toString(), icon: Compass, color: "text-purple-500" },
+  { label: "Categories", value: STATS_DATA.categoriesExplored.toString(), icon: Compass, color: "text-[#1A4A3A]" },
 ];
 
 export function StatsBanner() {
