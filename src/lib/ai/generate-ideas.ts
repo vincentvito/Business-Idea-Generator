@@ -5,7 +5,7 @@ import type { SeedKeyword } from "@/lib/dataforseo/keyword-suggestions";
 
 const GENERATE_IDEAS_TOOL = {
   name: "generate_ideas" as const,
-  description: "Generates 50 localized food business ideas for a category and location.",
+  description: "Generates 15 localized food business ideas for a category and location.",
   input_schema: {
     type: "object" as const,
     properties: {
@@ -110,14 +110,14 @@ export async function generateIdeas(
 
   const response = await client.messages.create({
     model: MODEL,
-    max_tokens: 8192,
+    max_tokens: 4096,
     system: SYSTEM_PROMPTS.IDEA_GENERATOR,
     tool_choice: { type: "tool", name: "generate_ideas" },
     tools: [GENERATE_IDEAS_TOOL],
     messages: [
       {
         role: "user",
-        content: `Generate exactly 50 unique, specific food business ideas in the "${category}" category for ${location}.${filterConstraints}${seedContext}
+        content: `Generate exactly 15 unique, specific food business ideas in the "${category}" category for ${location}.${filterConstraints}${seedContext}
 
 Requirements:
 - Each idea must address a SPECIFIC pain point that exists in ${location}
@@ -129,11 +129,7 @@ ${filters?.businessModel ? "" : "- Vary the business models: services, products,
   - At most 1 keyword can be a broad term from the seed list
   - NEVER reuse the exact same keyword across different ideas — each idea needs its OWN keywords
   - Keywords must be things real people actually type into Google
-  - BAD: "AI personalized HIIT workout plans for Dubai office workers" (too long, no one searches this)
-  - BAD: Using "personal trainer" for 10 different ideas (no reuse!)
-  - GOOD: Idea #1: "online yoga classes", "yoga for beginners at home", "virtual yoga subscription"
-  - GOOD: Idea #2: "crossfit gym membership", "crossfit box near me", "crossfit beginner program"
-- Number ideas from 1 to 50
+- Number ideas from 1 to 15
 
 Make ideas specific and actionable, not generic. For example:
 - BAD: "Online fitness coaching"

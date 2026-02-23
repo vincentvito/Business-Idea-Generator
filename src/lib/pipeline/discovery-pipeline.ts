@@ -29,7 +29,7 @@ export async function runDiscoveryPipeline(
     data: { count: seedKeywords.length },
   });
 
-  // Stage 1: Generate 50 Ideas (Claude, seeded with real keywords)
+  // Stage 1: Generate Ideas (Claude, seeded with real keywords)
   emit({
     type: "stage_start",
     stage: "generation",
