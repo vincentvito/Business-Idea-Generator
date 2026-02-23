@@ -70,8 +70,8 @@ export const VALIDATION_STAGES = [
 ] as const;
 
 export const DISCOVERY_STAGES = [
-  { id: "seeding", label: "Researching food market demand", icon: "Search" },
-  { id: "generation", label: "Generating food business ideas", icon: "Lightbulb" },
+  { id: "seeding", label: "Fetching {category} market keywords", icon: "Search" },
+  { id: "generation", label: "Generating {category} business ideas", icon: "Lightbulb" },
   { id: "volume_check", label: "Checking search volume", icon: "BarChart3" },
   { id: "ranking", label: "Finding opportunities", icon: "Trophy" },
 ] as const;

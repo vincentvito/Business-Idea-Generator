@@ -61,7 +61,12 @@ function transformDiscoveryResult(events: PipelineEvent[]): DiscoveryResult {
   return { ideas: [], goldilocksIdeas: [] };
 }
 
-const stages = DISCOVERY_STAGES.map((s) => ({ id: s.id, label: s.label }));
+function getStages(category: string) {
+  return DISCOVERY_STAGES.map((s) => ({
+    id: s.id,
+    label: s.label.replace("{category}", category || "food"),
+  }));
+}
 
 const HOW_IT_WORKS = [
   { step: 1, icon: Compass, title: "Pick Food Type & Location", desc: "Choose from 12 food & beverage categories and your target market" },
@@ -369,7 +374,7 @@ export default function DiscoverPage() {
                 Generating {category} business ideas
               </h3>
               <PipelineProgress
-                stages={stages}
+                stages={getStages(category)}
                 currentStage={discovery.currentStage}
                 completedStages={completedSet}
                 error={discovery.error}

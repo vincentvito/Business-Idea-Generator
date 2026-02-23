@@ -30,13 +30,16 @@ export const PipelineProgress = memo(function PipelineProgress({
   const [elapsed, setElapsed] = useState(0);
   const durations = useRef<Map<string, number>>(new Map());
   const prevStage = useRef<string | null>(null);
+  const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
-    // When stage changes, record duration for the previous stage
+    // When stage changes, record actual duration for the previous stage
     if (prevStage.current && prevStage.current !== currentStage) {
-      durations.current.set(prevStage.current, elapsed);
+      const actualSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+      durations.current.set(prevStage.current, actualSeconds);
     }
     prevStage.current = currentStage;
+    startTimeRef.current = Date.now();
     setElapsed(0);
 
     if (!currentStage) return;
@@ -81,7 +84,7 @@ export const PipelineProgress = memo(function PipelineProgress({
               )}
               {isCompleted && duration != null && (
                 <span className="ml-auto text-xs text-muted-foreground tabular-nums">
-                  {duration}s
+                  {duration === 0 ? "< 1s" : `${duration}s`}
                 </span>
               )}
             </div>
