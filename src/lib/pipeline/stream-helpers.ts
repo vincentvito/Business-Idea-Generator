@@ -14,10 +14,14 @@ export function createSSEStream(
       try {
         await runner(emit);
       } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        const isConfigError = message.includes("ANTHROPIC_API_KEY");
         emit({
           type: "error",
           stage: "pipeline",
-          message: error instanceof Error ? error.message : String(error),
+          message: isConfigError
+            ? "AI service is not configured. Try restarting the dev server: rm -rf .next && npm run dev"
+            : message,
           recoverable: false,
         });
       } finally {
