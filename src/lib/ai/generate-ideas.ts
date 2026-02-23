@@ -5,7 +5,7 @@ import type { SeedKeyword } from "@/lib/dataforseo/keyword-suggestions";
 
 const GENERATE_IDEAS_TOOL = {
   name: "generate_ideas" as const,
-  description: "Generates 15 localized food business ideas for a category and location.",
+  description: "Generates 20 localized food business ideas for a category and location.",
   input_schema: {
     type: "object" as const,
     properties: {
@@ -117,7 +117,7 @@ export async function generateIdeas(
     messages: [
       {
         role: "user",
-        content: `Generate exactly 15 unique, specific food business ideas in the "${category}" category for ${location}.${filterConstraints}${seedContext}
+        content: `Generate exactly 20 unique, specific food business ideas in the "${category}" category for ${location}.${filterConstraints}${seedContext}
 
 Requirements:
 - Each idea must address a SPECIFIC pain point that exists in ${location}
@@ -129,7 +129,7 @@ ${filters?.businessModel ? "" : "- Vary the business models: services, products,
   - At most 1 keyword can be a broad term from the seed list
   - NEVER reuse the exact same keyword across different ideas — each idea needs its OWN keywords
   - Keywords must be things real people actually type into Google
-- Number ideas from 1 to 15
+- Number ideas from 1 to 20
 
 Make ideas specific and actionable, not generic. For example:
 - BAD: "Online fitness coaching"
