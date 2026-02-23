@@ -70,10 +70,12 @@ export const VALIDATION_STAGES = [
 ] as const;
 
 export const DISCOVERY_STAGES = [
-  { id: "seeding", label: "Fetching {category} market keywords", icon: "Search" },
+  { id: "market_research", label: "Analyzing the {category} market", icon: "Search" },
+  { id: "location_analysis", label: "Analyzing {location} food industry trends", icon: "MapPin" },
   { id: "generation", label: "Generating {category} business ideas", icon: "Lightbulb" },
-  { id: "volume_check", label: "Checking search volume", icon: "BarChart3" },
-  { id: "ranking", label: "Finding opportunities", icon: "Trophy" },
+  { id: "volume_check", label: "Checking search volumes", icon: "BarChart3" },
+  { id: "competition", label: "Analyzing competition", icon: "Users" },
+  { id: "ranking", label: "Ranking opportunities", icon: "Trophy" },
 ] as const;
 
 export const BUDGET_RANGES = [

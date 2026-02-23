@@ -61,10 +61,12 @@ function transformDiscoveryResult(events: PipelineEvent[]): DiscoveryResult {
   return { ideas: [], goldilocksIdeas: [] };
 }
 
-function getStages(category: string) {
+function getStages(category: string, location: string) {
   return DISCOVERY_STAGES.map((s) => ({
     id: s.id,
-    label: s.label.replace("{category}", category || "food"),
+    label: s.label
+      .replace("{category}", category || "food")
+      .replace("{location}", location || "your area"),
   }));
 }
 
@@ -374,7 +376,7 @@ export default function DiscoverPage() {
                 Generating {category} business ideas
               </h3>
               <PipelineProgress
-                stages={getStages(category)}
+                stages={getStages(category, location)}
                 currentStage={discovery.currentStage}
                 completedStages={completedSet}
                 error={discovery.error}
