@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { CategorySelector } from "@/components/discover/category-selector";
 import { PipelineProgress } from "@/components/validate/pipeline-progress";
 import { IdeaGenerator } from "@/components/discover/idea-generator";
-import { DayZeroPlan } from "@/components/discover/day-zero-plan";
 import { WaitingInsights } from "@/components/discover/waiting-insights";
 import { LiveFeed } from "@/components/home/live-feed";
 import { useSSEStream } from "@/hooks/use-sse-stream";
@@ -21,31 +20,25 @@ import {
   Lightbulb,
   Compass,
   Trophy,
-  BarChart3,
   Star,
   TrendingUp,
   Users,
   CheckCircle2,
   PenTool,
   FileText,
-  Megaphone,
   Palette,
   Swords,
   AlertTriangle,
 } from "lucide-react";
 import type { PipelineEvent } from "@/types/pipeline";
 import type { RankedIdea, DiscoveryFilters } from "@/types/discovery";
-import type { DayZeroPlan as DayZeroPlanType } from "@/types/discovery";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass-client";
 
 interface DiscoveryResult {
   ideas: RankedIdea[];
   goldilocksIdeas: RankedIdea[];
   dataSource?: "mock" | "live";
   totalGenerated?: number;
-}
-
-interface EnrichResult {
-  plan: DayZeroPlanType | null;
 }
 
 function transformDiscoveryResult(events: PipelineEvent[]): DiscoveryResult {
@@ -66,15 +59,6 @@ function transformDiscoveryResult(events: PipelineEvent[]): DiscoveryResult {
     }
   }
   return { ideas: [], goldilocksIdeas: [] };
-}
-
-function transformEnrichResult(events: PipelineEvent[]): EnrichResult {
-  for (const event of events) {
-    if (event.type === "stage_complete" && event.stage === "plan") {
-      return { plan: event.data as DayZeroPlanType };
-    }
-  }
-  return { plan: null };
 }
 
 const stages = DISCOVERY_STAGES.map((s) => ({ id: s.id, label: s.label }));
@@ -108,14 +92,6 @@ const FEATURES = [
     title: "Full Business Plan",
     desc: "Executive summary, mission & vision, target market analysis, financial projections, and competitive advantage",
     tier: "Deep Dive",
-  },
-  {
-    icon: Megaphone,
-    color: "text-orange-500",
-    bg: "bg-orange-50",
-    title: "Marketing & Go-To-Market",
-    desc: "Lean canvas, revenue model, and a 30-day go-to-market plan with weekly milestones",
-    tier: "Day Zero",
   },
   {
     icon: Palette,
@@ -152,17 +128,11 @@ export default function DiscoverPage() {
   const [filters, setFilters] = useState<DiscoveryFilters>({});
 
   const transformDiscovery = useCallback(transformDiscoveryResult, []);
-  const transformEnrich = useCallback(transformEnrichResult, []);
 
   const discovery = useSSEStream<
     { category: string; location: string; filters?: DiscoveryFilters },
     DiscoveryResult
   >("/api/discover/generate", transformDiscovery);
-
-  const enrich = useSSEStream<
-    { idea: RankedIdea; category: string; location: string; filters?: DiscoveryFilters },
-    EnrichResult
-  >("/api/discover/enrich", transformEnrich);
 
   const completedSet = useMemo(
     () => new Set(discovery.completedStages.keys()),
@@ -180,12 +150,6 @@ export default function DiscoverPage() {
 
   const handleSelectIdea = (idea: RankedIdea) => {
     setSelectedIdea((prev) => (prev?.id === idea.id ? null : idea));
-  };
-
-  const handleGeneratePlan = () => {
-    if (selectedIdea) {
-      enrich.start({ idea: selectedIdea, category, location, filters });
-    }
   };
 
   const handleDeepDive = (idea: RankedIdea) => {
@@ -357,7 +321,7 @@ export default function DiscoverPage() {
                   <p className="text-xs text-muted-foreground mt-1.5">{f.desc}</p>
                   {"tier" in f && (
                     <span className="mt-3 inline-block text-[10px] font-medium text-muted-foreground bg-muted rounded-full px-2 py-0.5">
-                      {f.tier === "Day Zero" ? "Free with Pro" : "$29.99 Deep Dive"}
+                      {AUTH_BYPASS_ENABLED ? "Free Deep Dive (Test)" : "$29.99 Deep Dive"}
                     </span>
                   )}
                 </div>
@@ -401,6 +365,9 @@ export default function DiscoverPage() {
         <SectionBand innerClassName="py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-1">
+              <h3 className="text-sm font-semibold mb-3">
+                Generating {category} business ideas
+              </h3>
               <PipelineProgress
                 stages={stages}
                 currentStage={discovery.currentStage}
@@ -425,16 +392,12 @@ export default function DiscoverPage() {
               ideas={discovery.result.ideas}
               onSelectIdea={handleSelectIdea}
               selectedIdeaId={selectedIdea?.id ?? null}
-              onGeneratePlan={handleGeneratePlan}
-              isGeneratingPlan={enrich.isRunning}
               onDeepDive={handleDeepDive}
               isStartingDeepDive={isStartingDeepDive}
               userTier={tier}
               dataSource={discovery.result.dataSource}
               totalGenerated={discovery.result.totalGenerated}
             />
-
-            {enrich.result?.plan && <DayZeroPlan plan={enrich.result.plan} />}
           </div>
         </SectionBand>
       )}

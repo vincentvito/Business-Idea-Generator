@@ -11,7 +11,6 @@ interface UsageData {
   tier: string;
   validate: ActionUsage;
   discover: ActionUsage;
-  enrich: ActionUsage;
 }
 
 export function useUsage() {

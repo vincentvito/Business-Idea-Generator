@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db/prisma";
-import { renderValidationPDF, renderPlanPDF } from "@/lib/pdf/render";
+import { renderValidationPDF } from "@/lib/pdf/render";
 import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass";
 
 export async function POST(request: NextRequest) {
@@ -27,15 +27,11 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const { type, data } = body;
 
-  let pdfBuffer: Buffer;
-
-  if (type === "validation") {
-    pdfBuffer = await renderValidationPDF(data);
-  } else if (type === "plan") {
-    pdfBuffer = await renderPlanPDF(data);
-  } else {
+  if (type !== "validation") {
     return Response.json({ error: "Invalid export type" }, { status: 400 });
   }
+
+  const pdfBuffer = await renderValidationPDF(data);
 
   return new Response(new Uint8Array(pdfBuffer), {
     headers: {

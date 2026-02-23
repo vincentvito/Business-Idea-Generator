@@ -1,6 +1,5 @@
-// Hardcoded master switch — set to true for development without auth/DB
-// When ready for production, flip to false (or remove and rely on env vars)
-const HARDCODED_DEV_BYPASS = true;
+// Controlled via env vars: set BYPASS_AUTH=true or NEXT_PUBLIC_BYPASS_AUTH=true
+const HARDCODED_DEV_BYPASS = false;
 
 export const AUTH_BYPASS_ENABLED =
   HARDCODED_DEV_BYPASS ||

@@ -1,7 +1,7 @@
 "use client";
 
 // Must match HARDCODED_DEV_BYPASS in bypass.ts
-const HARDCODED_DEV_BYPASS = true;
+const HARDCODED_DEV_BYPASS = false;
 
 export const AUTH_BYPASS_ENABLED =
   HARDCODED_DEV_BYPASS ||

@@ -5,15 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookmarkButton } from "@/components/shared/bookmark-button";
 import { ShareButton } from "@/components/shared/share-button";
-import { Star, ChevronDown, ChevronUp, ArrowRight, Lock, Sparkles } from "lucide-react";
+import { Star, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import type { RankedIdea } from "@/types/discovery";
+import { AUTH_BYPASS_ENABLED } from "@/lib/auth/bypass-client";
 
 interface IdeaGeneratorProps {
   ideas: RankedIdea[];
   onSelectIdea: (idea: RankedIdea) => void;
   selectedIdeaId: number | null;
-  onGeneratePlan: () => void;
-  isGeneratingPlan: boolean;
   onDeepDive?: (idea: RankedIdea) => void;
   isStartingDeepDive?: boolean;
   userTier?: string;
@@ -25,8 +24,6 @@ export function IdeaGenerator({
   ideas,
   onSelectIdea,
   selectedIdeaId,
-  onGeneratePlan,
-  isGeneratingPlan,
   onDeepDive,
   isStartingDeepDive,
   userTier = "FREE",
@@ -133,11 +130,8 @@ export function IdeaGenerator({
                       <td colSpan={7} className="p-4">
                         <IdeaDetail
                           idea={idea}
-                          onGeneratePlan={onGeneratePlan}
-                          isGeneratingPlan={isGeneratingPlan}
                           onDeepDive={onDeepDive}
                           isStartingDeepDive={isStartingDeepDive}
-                          userTier={userTier}
                         />
                       </td>
                     </tr>
@@ -154,22 +148,15 @@ export function IdeaGenerator({
 
 interface IdeaDetailProps {
   idea: RankedIdea;
-  onGeneratePlan: () => void;
-  isGeneratingPlan: boolean;
   onDeepDive?: (idea: RankedIdea) => void;
   isStartingDeepDive?: boolean;
-  userTier?: string;
 }
 
 export function IdeaDetail({
   idea,
-  onGeneratePlan,
-  isGeneratingPlan,
   onDeepDive,
   isStartingDeepDive,
-  userTier = "FREE",
 }: IdeaDetailProps) {
-  const canGeneratePlan = userTier !== "FREE";
   return (
     <div className="space-y-3 text-sm">
       <div className="flex items-start justify-between">
@@ -216,28 +203,6 @@ export function IdeaDetail({
         ))}
       </div>
       <div className="flex flex-wrap gap-2 mt-2">
-        {canGeneratePlan ? (
-          <Button onClick={onGeneratePlan} disabled={isGeneratingPlan}>
-            {isGeneratingPlan ? (
-              <>
-                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Generating Plan...
-              </>
-            ) : (
-              <>
-                Generate Day Zero Plan <ArrowRight className="ml-2 h-4 w-4" />
-              </>
-            )}
-          </Button>
-        ) : (
-          <Button variant="outline" asChild>
-            <a href="/pricing">
-              <Lock className="mr-2 h-4 w-4" />
-              Upgrade to Pro to unlock Day Zero Plans
-            </a>
-          </Button>
-        )}
-
         {onDeepDive && (
           <Button
             onClick={(e) => {
@@ -255,7 +220,7 @@ export function IdeaDetail({
             ) : (
               <>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Get Deep Dive — $29.99
+                {AUTH_BYPASS_ENABLED ? "Get Deep Dive — Free (Test)" : "Get Deep Dive — $29.99"}
               </>
             )}
           </Button>

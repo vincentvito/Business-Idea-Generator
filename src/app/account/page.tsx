@@ -151,11 +151,6 @@ export default function AccountPage() {
                   limit={usage.discover.limit}
                   label="Discovery Sessions"
                 />
-                <UsageMeter
-                  used={usage.enrich.used}
-                  limit={usage.enrich.limit}
-                  label="Day Zero Plans"
-                />
                 {tier === "FREE" && (
                   <p className="text-xs text-muted-foreground pt-2">
                     Upgrade to Pro for unlimited usage.

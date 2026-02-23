@@ -10,5 +10,4 @@ export type {
 
 export type {
   IdeaStub,
-  DayZeroPlan,
 } from "@/types/discovery";

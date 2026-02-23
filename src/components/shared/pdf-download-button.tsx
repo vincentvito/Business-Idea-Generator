@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 
 interface PDFDownloadButtonProps {
-  type: "validation" | "plan";
+  type: "validation";
   data: unknown;
   label?: string;
 }

@@ -9,7 +9,6 @@ export async function GET() {
       tier: "PRO",
       validate: { used: 0, limit: Infinity },
       discover: { used: 0, limit: Infinity },
-      enrich: { used: 0, limit: Infinity },
     });
   }
 
@@ -49,6 +48,5 @@ export async function GET() {
     tier,
     validate: { used: usageMap["validate"] ?? 0, limit: limits.validate },
     discover: { used: usageMap["discover"] ?? 0, limit: limits.discover },
-    enrich: { used: usageMap["enrich"] ?? 0, limit: limits.enrich },
   });
 }
