@@ -4,10 +4,10 @@ let client: Anthropic | null = null;
 
 export function getAnthropicClient(): Anthropic {
   if (!client) {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
     if (!apiKey) {
       throw new Error(
-        "ANTHROPIC_API_KEY environment variable is not set. Add it to .env.local or your deployment environment."
+        "AI service is not configured. Please contact the administrator."
       );
     }
     client = new Anthropic({ apiKey });

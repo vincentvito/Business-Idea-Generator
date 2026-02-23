@@ -57,8 +57,7 @@ export default function HomePage() {
               <Button
                 asChild
                 size="lg"
-                variant="outline"
-                className="h-12 px-8 text-base border-2 border-white text-white hover:bg-white/10 font-semibold"
+                className="h-12 px-8 text-base border-2 border-white bg-transparent text-white hover:bg-white/10 font-semibold shadow-lg"
               >
                 <Link href="/validate">
                   <Search className="mr-2 h-5 w-5" />
