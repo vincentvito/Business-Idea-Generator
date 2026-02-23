@@ -1,43 +1,33 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { loadEnvConfig } from "@next/env";
 
 let client: Anthropic | null = null;
+let envLoaded = false;
 
 /**
- * Fallback: read ANTHROPIC_API_KEY directly from .env.local when
- * Next.js / Turbopack has not populated process.env (stale cache, etc.).
+ * Force-load env files using Next.js's own loader when
+ * Turbopack hasn't populated process.env yet.
  */
-function loadEnvFallback(): string | undefined {
-  try {
-    const envPath = join(process.cwd(), ".env.local");
-    const content = readFileSync(envPath, "utf-8");
-    const match = content.match(/^ANTHROPIC_API_KEY=(.+)$/m);
-    if (match) {
-      const value = match[1].trim();
-      process.env.ANTHROPIC_API_KEY = value;
-      console.log("[AI] Loaded ANTHROPIC_API_KEY from .env.local fallback");
-      return value;
-    }
-  } catch {
-    // .env.local does not exist or is unreadable
+function ensureEnvLoaded(): void {
+  if (envLoaded) return;
+  envLoaded = true;
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.log("[AI] ANTHROPIC_API_KEY not in process.env, forcing @next/env load...");
+    const { loadedEnvFiles } = loadEnvConfig(process.cwd());
+    console.log("[AI] Loaded env files:", loadedEnvFiles?.map((f) => f.path));
+    console.log("[AI] ANTHROPIC_API_KEY now present:", !!process.env.ANTHROPIC_API_KEY);
   }
-  return undefined;
 }
 
 function resolveApiKey(): string {
-  let apiKey = process.env.ANTHROPIC_API_KEY?.trim();
+  ensureEnvLoaded();
+
+  const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
 
   if (!apiKey) {
-    apiKey = loadEnvFallback();
-  }
-
-  if (!apiKey) {
-    const envPath = join(process.cwd(), ".env.local");
     throw new Error(
-      "ANTHROPIC_API_KEY is missing. Checked process.env and " +
-        envPath +
-        ". Ensure the key is set in .env.local and restart: rm -rf .next && npm run dev"
+      "ANTHROPIC_API_KEY is missing. Ensure the key is set in .env.local and restart: rm -rf .next && npm run dev"
     );
   }
 

@@ -1,5 +1,11 @@
+import { loadEnvConfig } from "@next/env";
+
 export async function register() {
   if (typeof window !== "undefined") return;
+
+  // Force-load env files at startup to ensure all vars are available
+  const { loadedEnvFiles } = loadEnvConfig(process.cwd());
+  console.log("[startup] Loaded env files:", loadedEnvFiles?.map((f) => f.path));
 
   const key = process.env.ANTHROPIC_API_KEY?.trim();
 
@@ -9,8 +15,8 @@ export async function register() {
     );
   } else {
     console.warn(
-      "[startup] WARNING: ANTHROPIC_API_KEY is NOT set in process.env. " +
-        "AI features will fail. Check .env.local and restart with: rm -rf .next && npm run dev"
+      "[startup] WARNING: ANTHROPIC_API_KEY is NOT set after loading env files. " +
+        "AI features will fail. Check .env.local has the key."
     );
   }
 
