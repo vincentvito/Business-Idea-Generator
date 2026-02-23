@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { SectionBand } from "@/components/layout/section-band";
 import { Button } from "@/components/ui/button";
-import { Search, Lightbulb, ArrowRight, Sparkles } from "lucide-react";
+import { Search, Lightbulb, ArrowRight } from "lucide-react";
 import { HeroImage } from "@/components/home/hero-image";
+import { RotatingText } from "@/components/home/rotating-text";
 import { StatsBanner } from "@/components/home/stats-banner";
 import { LiveFeed } from "@/components/home/live-feed";
 import { HowItWorks } from "@/components/home/how-it-works";
@@ -28,23 +29,18 @@ export default function HomePage() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left column: Content */}
           <div className="text-center lg:text-left">
-            <div className="flex justify-center lg:justify-start mb-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm backdrop-blur-sm">
-                <Sparkles className="h-4 w-4 text-yellow-300" />
-                <span>AI-powered food business discovery</span>
-              </div>
-            </div>
-
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Find Your Next
+              Do you want to start a
               <br />
-              <span className="text-yellow-300">Food Business Idea</span>
+              <span className="text-yellow-300">
+                <RotatingText />
+              </span>
+              <span className="text-yellow-300">?</span>
             </h1>
 
             <p className="mt-4 max-w-xl text-lg text-purple-100 sm:text-xl">
-              From idea to launch: AI generates food business concepts complete
-              with a business plan, mood board, menu engineering, and brand
-              identity.
+              Market analysis powered by real market data to generate or refine
+              your food business idea.
             </p>
 
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
@@ -55,8 +51,18 @@ export default function HomePage() {
               >
                 <Link href="/discover">
                   <Lightbulb className="mr-2 h-5 w-5" />
-                  Generate Food Business Ideas
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  Generate Idea
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 text-base border-white/30 text-white hover:bg-white/10 font-semibold"
+              >
+                <Link href="/validate">
+                  <Search className="mr-2 h-5 w-5" />
+                  Validate Idea
                 </Link>
               </Button>
             </div>
@@ -71,7 +77,6 @@ export default function HomePage() {
 
       {/* Band 2: Stats + Validate CTA (white) */}
       <SectionBand innerClassName="py-10">
-        <SurpriseMe />
         <LiveFeed />
         <StatsBanner />
 
@@ -89,11 +94,14 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <Button asChild className="shrink-0 sm:self-center">
-              <Link href="/validate">
-                Validate an Idea <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+              <Button asChild>
+                <Link href="/validate">
+                  Validate an Idea <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <SurpriseMe variant="inline" />
+            </div>
           </div>
         </div>
       </SectionBand>

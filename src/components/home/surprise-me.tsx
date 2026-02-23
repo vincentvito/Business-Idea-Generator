@@ -11,12 +11,13 @@ import Link from "next/link";
 const pool = getIdeasPool();
 
 interface SurpriseMeProps {
-  variant?: "default" | "hero";
+  variant?: "default" | "hero" | "inline";
 }
 
 export function SurpriseMe({ variant = "default" }: SurpriseMeProps) {
   const [idea, setIdea] = useState<typeof pool[number] | null>(null);
   const isHero = variant === "hero";
+  const isInline = variant === "inline";
 
   const handleSurprise = () => {
     const random = pool[Math.floor(Math.random() * pool.length)];
@@ -24,8 +25,13 @@ export function SurpriseMe({ variant = "default" }: SurpriseMeProps) {
   };
 
   return (
-    <div className="mt-6 text-center">
-      {isHero ? (
+    <div className={isInline ? "" : "mt-6 text-center"}>
+      {isInline ? (
+        <Button onClick={handleSurprise} variant="outline" size="default" className="gap-2">
+          <Shuffle className="h-4 w-4" />
+          Surprise Me
+        </Button>
+      ) : isHero ? (
         <Button
           onClick={handleSurprise}
           variant="ghost"
