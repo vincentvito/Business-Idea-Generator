@@ -30,17 +30,17 @@ export default function HomePage() {
           {/* Left column: Content */}
           <div className="text-center lg:text-left">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Do you want to start a
+              Launch your
               <br />
               <span className="text-yellow-300">
                 <RotatingText />
               </span>
-              <span className="text-yellow-300">?</span>
             </h1>
 
             <p className="mt-4 max-w-xl text-lg text-purple-100 sm:text-xl">
-              Market analysis powered by real market data to generate or refine
-              your food business idea.
+              Stop guessing what to launch. We scan real search demand and
+              competitor gaps to find food business ideas people are already
+              looking for.
             </p>
 
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
@@ -58,11 +58,11 @@ export default function HomePage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-12 px-8 text-base border-white/30 text-white hover:bg-white/10 font-semibold"
+                className="h-12 px-8 text-base border-2 border-white text-white hover:bg-white/10 font-semibold"
               >
                 <Link href="/validate">
                   <Search className="mr-2 h-5 w-5" />
-                  Validate Idea
+                  Validate your Idea
                 </Link>
               </Button>
             </div>
@@ -87,7 +87,7 @@ export default function HomePage() {
                 <Search className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="text-lg font-bold">Already have a food business idea?</h2>
+                <h2 className="text-lg font-bold">Already have an idea in the food & beverage industry?</h2>
                 <p className="text-muted-foreground mt-1">
                   Get a 60-second reality check with real search volume,
                   competitor analysis, and a data-driven score.

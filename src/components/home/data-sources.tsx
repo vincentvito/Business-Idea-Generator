@@ -16,6 +16,8 @@ import {
   Sparkles,
   Palette,
   Clock,
+  MapPin,
+  Star,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -77,6 +79,28 @@ const dataSources: DataSource[] = [
     accentBg: "bg-yellow-50",
   },
   {
+    name: "Google Maps Data",
+    provider: "via DataForSEO",
+    description:
+      "Local business density, ratings, and review counts to assess competition in any area.",
+    metric: "Location-based insights",
+    metricIcon: MapPin,
+    icon: MapPin,
+    color: "text-red-500",
+    accentBg: "bg-red-50",
+  },
+  {
+    name: "Yelp Data",
+    provider: "via DataForSEO",
+    description:
+      "Restaurant ratings, review sentiment, and category trends to validate local food demand.",
+    metric: "Review & rating analysis",
+    metricIcon: Star,
+    icon: Star,
+    color: "text-rose-500",
+    accentBg: "bg-rose-50",
+  },
+  {
     name: "Claude AI",
     provider: "Anthropic",
     description:
@@ -114,7 +138,7 @@ const dataSources: DataSource[] = [
 
 const aggregateStats = [
   { label: "1M+ data points analyzed", icon: Database },
-  { label: "7 data sources", icon: Layers },
+  { label: "9 data sources", icon: Layers },
   { label: "Real-time market signals", icon: Radio },
 ];
 
