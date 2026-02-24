@@ -7,6 +7,7 @@ import type { SearchVolumeResult } from "./types";
 export interface KeywordMetricsResult {
   metrics: KeywordMetrics[];
   source: "mock" | "live";
+  errorReason?: string;
 }
 
 // ─── Mock data generation (deterministic, same pattern as the old Google Ads mock) ───
@@ -194,7 +195,11 @@ export async function fetchKeywordMetrics(
 ): Promise<KeywordMetricsResult> {
   if (isUsingMockData()) {
     await new Promise((r) => setTimeout(r, 500));
-    return { metrics: generateMockMetrics(keywords), source: "mock" };
+    return {
+      metrics: generateMockMetrics(keywords),
+      source: "mock",
+      errorReason: "DataForSEO credentials not configured. Set DATAFORSEO_LOGIN in .env.local.",
+    };
   }
 
   // Split into cached and uncached
@@ -264,8 +269,9 @@ export async function fetchKeywordMetrics(
       }
     }
 
-    console.warn("[DataForSEO Keywords] Falling back to mock data.");
-    return { metrics: generateMockMetrics(keywords), source: "mock" };
+    const apiErrorReason = `DataForSEO API error: ${classified.message}`;
+    console.warn("[DataForSEO Keywords]", apiErrorReason);
+    return { metrics: generateMockMetrics(keywords), source: "mock", errorReason: apiErrorReason };
   }
 }
 

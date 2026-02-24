@@ -167,6 +167,7 @@ async function fetchFromDataForSEO(
 export interface SeedKeywordsResult {
   keywords: SeedKeyword[];
   source: "live" | "mock";
+  errorReason?: string;
 }
 
 export async function fetchSeedKeywords(
@@ -176,7 +177,11 @@ export async function fetchSeedKeywords(
 ): Promise<SeedKeywordsResult> {
   if (isUsingMockData()) {
     await new Promise((r) => setTimeout(r, 300));
-    return { keywords: generateMockSeedKeywords(seeds), source: "mock" };
+    return {
+      keywords: generateMockSeedKeywords(seeds),
+      source: "mock",
+      errorReason: "DataForSEO credentials not configured. Set DATAFORSEO_LOGIN in .env.local.",
+    };
   }
 
   // Check cache (include primary language in cache key)
@@ -234,8 +239,9 @@ export async function fetchSeedKeywords(
     }
 
     // API returned results but all had zero volume — still not mock, just empty market
-    console.warn("[DataForSEO Seeds] No keywords with volume found in any language/location. Falling back to mock data.");
-    return { keywords: generateMockSeedKeywords(seeds), source: "mock" };
+    const zeroVolumeReason = "DataForSEO API returned keywords but none had search volume. The market may be too niche or the keywords too specific.";
+    console.warn("[DataForSEO Seeds]", zeroVolumeReason);
+    return { keywords: generateMockSeedKeywords(seeds), source: "mock", errorReason: zeroVolumeReason };
   } catch (error) {
     const classified = classifyError(error);
     console.error(`[DataForSEO Seeds] ${classified.type}: ${classified.message}`);
@@ -253,7 +259,8 @@ export async function fetchSeedKeywords(
       }
     }
 
-    console.warn("[DataForSEO Seeds] Falling back to mock data.");
-    return { keywords: generateMockSeedKeywords(seeds), source: "mock" };
+    const apiErrorReason = `DataForSEO API error: ${classified.message}`;
+    console.warn("[DataForSEO Seeds]", apiErrorReason);
+    return { keywords: generateMockSeedKeywords(seeds), source: "mock", errorReason: apiErrorReason };
   }
 }

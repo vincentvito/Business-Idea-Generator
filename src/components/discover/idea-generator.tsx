@@ -17,6 +17,7 @@ interface IdeaGeneratorProps {
   isStartingDeepDive?: boolean;
   userTier?: string;
   dataSource?: "mock" | "live";
+  dataWarning?: string;
   totalGenerated?: number;
 }
 
@@ -28,32 +29,40 @@ export function IdeaGenerator({
   isStartingDeepDive,
   userTier = "FREE",
   dataSource,
+  dataWarning,
   totalGenerated,
 }: IdeaGeneratorProps) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h3 className="font-semibold">
-            {ideas.length} Ideas Found
-          </h3>
-          {dataSource && (
-            <Badge
-              variant="outline"
-              className={
-                dataSource === "live"
-                  ? "bg-green-50 text-green-700 border-green-200"
-                  : "bg-orange-50 text-orange-700 border-orange-200"
-              }
-            >
-              {dataSource === "live" ? "Live data" : "Estimated data"}
-            </Badge>
-          )}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">
+              {ideas.length} Ideas Found
+            </h3>
+            {dataSource && (
+              <Badge
+                variant="outline"
+                className={
+                  dataSource === "live"
+                    ? "bg-green-50 text-green-700 border-green-200"
+                    : "bg-orange-50 text-orange-700 border-orange-200"
+                }
+              >
+                {dataSource === "live" ? "Live data" : "Estimated data"}
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+            <span>= Goldilocks opportunity</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-          <span>= Goldilocks opportunity</span>
-        </div>
+        {dataSource === "mock" && dataWarning && (
+          <p className="text-xs text-orange-600 max-w-xl">
+            {dataWarning}
+          </p>
+        )}
       </div>
 
       <div className="overflow-x-auto border rounded-lg">

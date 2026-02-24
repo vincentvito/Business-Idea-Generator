@@ -38,6 +38,7 @@ interface DiscoveryResult {
   ideas: RankedIdea[];
   goldilocksIdeas: RankedIdea[];
   dataSource?: "mock" | "live";
+  dataWarning?: string;
   totalGenerated?: number;
 }
 
@@ -48,12 +49,14 @@ function transformDiscoveryResult(events: PipelineEvent[]): DiscoveryResult {
         ranked: RankedIdea[];
         goldilocks: RankedIdea[];
         dataSource?: "mock" | "live";
+        dataWarning?: string;
         totalGenerated?: number;
       };
       return {
         ideas: data.ranked,
         goldilocksIdeas: data.goldilocks,
         dataSource: data.dataSource,
+        dataWarning: data.dataWarning,
         totalGenerated: data.totalGenerated,
       };
     }
@@ -404,6 +407,7 @@ export default function DiscoverPage() {
               isStartingDeepDive={isStartingDeepDive}
               userTier={tier}
               dataSource={discovery.result.dataSource}
+              dataWarning={discovery.result.dataWarning}
               totalGenerated={discovery.result.totalGenerated}
             />
           </div>

@@ -98,6 +98,7 @@ export async function runDiscoveryPipeline(
   const seedResult = await fetchSeedKeywords(seeds, location || undefined, languageCodes);
   const seedKeywords = seedResult.keywords;
   const seedSource = seedResult.source;
+  const seedErrorReason = seedResult.errorReason;
 
   // Kick off AI generation in the background while stages 1 & 2 show progress
   const backgroundGeneration = generateIdeas(category, location, filters, seedKeywords);
@@ -106,11 +107,12 @@ export async function runDiscoveryPipeline(
   // Pad stage 1 to appear 10-15s
   await randomDelay(10_000, 15_000);
 
+  const marketResearchWarning = [locationWarning, seedErrorReason].filter(Boolean).join(" ");
   emit({
     type: "stage_complete",
     stage: "market_research",
     data: { count: seedKeywords.length },
-    ...(locationWarning ? { warning: locationWarning } : {}),
+    ...(marketResearchWarning ? { warning: marketResearchWarning } : {}),
   });
 
   // Stage 2: Location Analysis — process seed keywords by volume tiers
@@ -190,6 +192,7 @@ export async function runDiscoveryPipeline(
     type: "stage_complete",
     stage: "volume_check",
     data: { count: metricsMap.size, source: metricsSource },
+    ...(metricsSource === "mock" && seedErrorReason ? { warning: seedErrorReason } : {}),
   });
 
   // Stage 5: Competition Analysis
@@ -225,6 +228,7 @@ export async function runDiscoveryPipeline(
       ranked: rankedIdeas,
       goldilocks: goldilocksIdeas,
       dataSource: metricsSource,
+      dataWarning: seedErrorReason,
       totalGenerated: allIdeas.length,
     },
   });
