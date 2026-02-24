@@ -125,9 +125,18 @@ async function fetchFromDataForSEO(
     [task]
   );
 
-  const results = response.tasks?.[0]?.result ?? [];
-  if (results.length === 0) {
-    console.warn("[DataForSEO Keywords] API returned 0 results for:", keywords);
+  const taskInfo = response.tasks?.[0];
+  console.log(
+    "[DataForSEO Keywords] Task status:", taskInfo?.status_code,
+    taskInfo?.status_message, "result_count:", taskInfo?.result_count
+  );
+
+  const results = taskInfo?.result ?? [];
+  if (results.length > 0) {
+    console.log("[DataForSEO Keywords] Sample result:", JSON.stringify(results[0]));
+  } else {
+    console.warn("[DataForSEO Keywords] API returned 0 results for:", keywords.slice(0, 5),
+      "task result:", JSON.stringify(taskInfo?.result));
   }
 
   const monthlySearches = (r: SearchVolumeResult) => {

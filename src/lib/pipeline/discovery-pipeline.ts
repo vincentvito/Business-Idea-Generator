@@ -91,27 +91,38 @@ export async function runDiscoveryPipeline(
   }).length;
 
   if (zeroVolumeCount > keywordGroups.length * 0.7 && seedKeywords.length > 0) {
-    const topSeeds = seedKeywords
+    console.warn(`[Discovery] ${zeroVolumeCount}/${keywordGroups.length} ideas have zero volume — using seed keyword data directly`);
+
+    // Convert seed keywords to KeywordMetrics directly — don't re-query the broken endpoint.
+    // The seed data came from keywords_for_keywords/live (Stage 1) which works.
+    const seedMetrics: KeywordMetrics[] = seedKeywords
       .sort((a, b) => b.search_volume - a.search_volume)
       .slice(0, 20)
-      .map((sk) => sk.keyword);
+      .map((sk) => ({
+        keyword: sk.keyword,
+        avg_monthly_searches: sk.search_volume,
+        competition: sk.competition,
+        competition_index: sk.competition === "HIGH" ? 75 : sk.competition === "MEDIUM" ? 50 : 25,
+        low_top_of_page_bid: sk.cpc * 0.5,
+        high_top_of_page_bid: sk.cpc * 1.5,
+        monthly_searches: [],
+        cpc: sk.cpc,
+      }));
 
+    // Assign 2 seed metrics to each zero-volume idea (round-robin)
     for (let i = 0; i < keywordGroups.length; i++) {
       const group = keywordGroups[i];
       const existing = metricsMap.get(group.ideaId) ?? [];
       if (existing.length === 0 || existing.every((k) => k.avg_monthly_searches === 0)) {
-        const idx = (i * 2) % topSeeds.length;
-        const fallbacks = [topSeeds[idx], topSeeds[(idx + 1) % topSeeds.length]];
-        group.keywords.push(...fallbacks);
-        // Also update the idea objects so fallback keywords appear in results
+        const idx = (i * 2) % seedMetrics.length;
+        const fallbacks = [seedMetrics[idx], seedMetrics[(idx + 1) % seedMetrics.length]];
         const idea = allIdeas.find((idea) => idea.id === group.ideaId);
-        if (idea) idea.suggested_keywords.push(...fallbacks);
+        if (idea) {
+          idea.suggested_keywords.push(...fallbacks.map((f) => f.keyword));
+        }
+        metricsMap.set(group.ideaId, [...existing, ...fallbacks]);
       }
     }
-
-    const enriched = await fetchBatchKeywordMetrics(keywordGroups, location || undefined);
-    metricsMap = enriched.metricsMap;
-    metricsSource = enriched.source;
   }
 
   emit({
