@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useEffect, useRef, useState } from "react";
-import { Check, Loader2, Circle } from "lucide-react";
+import { AlertTriangle, Check, Loader2, Circle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ interface PipelineProgressProps {
   error: string | null;
   stageMessage?: string | null;
   progress?: number; // 0-100
+  stageWarnings?: Map<string, string>;
 }
 
 export const PipelineProgress = memo(function PipelineProgress({
@@ -26,6 +27,7 @@ export const PipelineProgress = memo(function PipelineProgress({
   error,
   stageMessage,
   progress,
+  stageWarnings,
 }: PipelineProgressProps) {
   const [elapsed, setElapsed] = useState(0);
   const durations = useRef<Map<string, number>>(new Map());
@@ -58,6 +60,7 @@ export const PipelineProgress = memo(function PipelineProgress({
         const isActive = stage.id === currentStage && !isCompleted;
         const isPending = !isCompleted && !isActive;
         const duration = durations.current.get(stage.id);
+        const warning = stageWarnings?.get(stage.id);
 
         return (
           <div key={stage.id} className="space-y-1.5">
@@ -101,6 +104,13 @@ export const PipelineProgress = memo(function PipelineProgress({
                     <div className="h-full w-1/3 rounded-full bg-primary animate-indeterminate" />
                   </div>
                 )}
+              </div>
+            )}
+
+            {isCompleted && warning && (
+              <div className="ml-7 flex items-start gap-1.5 text-xs text-amber-600">
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                <span>{warning}</span>
               </div>
             )}
           </div>

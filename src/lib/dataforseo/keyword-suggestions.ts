@@ -121,14 +121,15 @@ function selectMixedKeywords(keywords: SeedKeyword[]): SeedKeyword[] {
 
 async function fetchFromDataForSEO(
   seeds: string[],
-  location?: string
+  location?: string,
+  languageCode: string = "en"
 ): Promise<SeedKeyword[]> {
   const locationCode = location ? getLocationCode(location) : null;
 
   const task = {
     keywords: seeds,
     ...(locationCode ? { location_code: locationCode } : {}),
-    language_code: "en",
+    language_code: languageCode,
     search_partners: false,
     limit: 50,
     sort_by: "search_volume",
@@ -145,6 +146,17 @@ async function fetchFromDataForSEO(
     .map(parseResult)
     .filter((r) => r.search_volume > 0);
 
+  // Treat zero usable results as a failure so the caller's catch block
+  // triggers the existing mock-data fallback.
+  if (parsed.length === 0) {
+    console.warn(
+      "[DataForSEO Seeds] API returned no keywords with volume > 0.",
+      "Raw result count:", results.length,
+      "Seeds queried:", seeds.slice(0, 5)
+    );
+    throw new Error("DataForSEO returned no seed keywords with positive search volume");
+  }
+
   return selectMixedKeywords(parsed);
 }
 
@@ -152,22 +164,51 @@ async function fetchFromDataForSEO(
 
 export async function fetchSeedKeywords(
   seeds: string[],
-  location?: string
+  location?: string,
+  languageCodes?: string[]
 ): Promise<SeedKeyword[]> {
   if (isUsingMockData()) {
     await new Promise((r) => setTimeout(r, 300));
     return generateMockSeedKeywords(seeds);
   }
 
-  // Check cache
-  const cacheKey = seeds.sort().join(",");
+  // Check cache (include primary language in cache key)
+  const primaryLang = languageCodes?.[0] ?? "en";
+  const cacheKey = [...seeds].sort().join(",") + `|${primaryLang}`;
   const cached = getCached<SeedKeyword[]>("seed", cacheKey, location);
   if (cached) return cached;
 
   try {
-    const results = await fetchFromDataForSEO(seeds, location);
-    setCache("seed", cacheKey, location, results);
-    return results;
+    // Always fetch English first
+    const enResults = await fetchFromDataForSEO(seeds, location, "en");
+
+    // If location has a non-English primary language and English results are sparse,
+    // fetch in the local language too and merge
+    const localLang = languageCodes?.find((l) => l !== "en");
+    let merged = enResults;
+
+    if (localLang && enResults.filter((k) => k.search_volume > 0).length < 15) {
+      try {
+        console.log(`[DataForSEO Seeds] English results sparse (${enResults.filter(k => k.search_volume > 0).length} with volume), fetching ${localLang} keywords...`);
+        const localResults = await fetchFromDataForSEO(seeds, location, localLang);
+
+        // Merge: add local-language keywords not already found in English results
+        const existingKeywords = new Set(enResults.map((k) => k.keyword.toLowerCase()));
+        const newKeywords = localResults.filter(
+          (k) => !existingKeywords.has(k.keyword.toLowerCase()) && k.search_volume > 0
+        );
+
+        if (newKeywords.length > 0) {
+          console.log(`[DataForSEO Seeds] Added ${newKeywords.length} ${localLang} keywords`);
+          merged = selectMixedKeywords([...enResults, ...newKeywords]);
+        }
+      } catch (localError) {
+        console.warn(`[DataForSEO Seeds] ${localLang} fetch failed, using English only:`, classifyError(localError).message);
+      }
+    }
+
+    setCache("seed", cacheKey, location, merged);
+    return merged;
   } catch (error) {
     const classified = classifyError(error);
     console.error(`[DataForSEO Seeds] ${classified.type}: ${classified.message}`);
@@ -175,7 +216,7 @@ export async function fetchSeedKeywords(
     if (shouldRetry(error)) {
       await new Promise((r) => setTimeout(r, 2000));
       try {
-        const results = await fetchFromDataForSEO(seeds, location);
+        const results = await fetchFromDataForSEO(seeds, location, "en");
         setCache("seed", cacheKey, location, results);
         return results;
       } catch (retryError) {

@@ -108,14 +108,15 @@ function resolveCompetitionLevel(r: SearchVolumeResult): "LOW" | "MEDIUM" | "HIG
 
 async function fetchFromDataForSEO(
   keywords: string[],
-  location?: string
+  location?: string,
+  languageCode: string = "en"
 ): Promise<KeywordMetrics[]> {
   const locationCode = location ? getLocationCode(location) : null;
 
   const task = {
     keywords,
     ...(locationCode ? { location_code: locationCode } : {}),
-    language_code: "en",
+    language_code: languageCode,
     search_partners: false,
     sort_by: "relevance",
   };
@@ -148,7 +149,7 @@ async function fetchFromDataForSEO(
     }));
   };
 
-  return results.map((r) => ({
+  const mapped = results.map((r) => ({
     keyword: r.keyword,
     avg_monthly_searches: getField<number>(r, "search_volume") ?? 0,
     competition: resolveCompetitionLevel(r),
@@ -158,13 +159,28 @@ async function fetchFromDataForSEO(
     monthly_searches: monthlySearches(r),
     cpc: getField<number>(r, "cpc") ?? 0,
   }));
+
+  // Treat empty results or all-zero data as a failure so the caller's
+  // catch block triggers the existing mock-data fallback.
+  const hasAnyData = mapped.length > 0 && mapped.some((m) => m.avg_monthly_searches > 0);
+  if (!hasAnyData) {
+    console.warn(
+      "[DataForSEO Keywords] API returned no usable data:",
+      mapped.length, "results, all with zero volume.",
+      "Keywords queried:", keywords.slice(0, 5)
+    );
+    throw new Error("DataForSEO returned empty or all-zero search volume results");
+  }
+
+  return mapped;
 }
 
 // ─── Public API ───
 
 export async function fetchKeywordMetrics(
   keywords: string[],
-  location?: string
+  location?: string,
+  languageCodes?: string[]
 ): Promise<KeywordMetricsResult> {
   if (isUsingMockData()) {
     await new Promise((r) => setTimeout(r, 500));
@@ -189,7 +205,34 @@ export async function fetchKeywordMetrics(
   }
 
   try {
-    const fresh = await fetchFromDataForSEO(uncachedKeywords, location);
+    let fresh = await fetchFromDataForSEO(uncachedKeywords, location, "en");
+
+    // If location has a non-English primary language and English volume data is sparse,
+    // try the local language and merge (keep highest volume per keyword)
+    const localLang = languageCodes?.find((l) => l !== "en");
+    if (localLang && fresh.filter((m) => m.avg_monthly_searches > 0).length < uncachedKeywords.length * 0.5) {
+      try {
+        console.log(`[DataForSEO Keywords] English volume sparse, fetching ${localLang} data...`);
+        const localFresh = await fetchFromDataForSEO(uncachedKeywords, location, localLang);
+
+        // Merge: for each keyword, keep the version with higher volume
+        const localLookup = new Map<string, KeywordMetrics>();
+        for (const m of localFresh) {
+          localLookup.set(m.keyword.toLowerCase(), m);
+        }
+
+        fresh = fresh.map((m) => {
+          const local = localLookup.get(m.keyword.toLowerCase());
+          if (local && local.avg_monthly_searches > m.avg_monthly_searches) {
+            return local;
+          }
+          return m;
+        });
+      } catch (localError) {
+        console.warn(`[DataForSEO Keywords] ${localLang} fetch failed, using English only`);
+      }
+    }
+
     for (const m of fresh) {
       setCache("kw", m.keyword, location, m);
     }
@@ -201,7 +244,7 @@ export async function fetchKeywordMetrics(
     if (shouldRetry(error)) {
       await new Promise((r) => setTimeout(r, 2000));
       try {
-        const fresh = await fetchFromDataForSEO(uncachedKeywords, location);
+        const fresh = await fetchFromDataForSEO(uncachedKeywords, location, "en");
         for (const m of fresh) {
           setCache("kw", m.keyword, location, m);
         }
@@ -218,11 +261,12 @@ export async function fetchKeywordMetrics(
 
 export async function fetchBatchKeywordMetrics(
   keywordGroups: { ideaId: number; keywords: string[] }[],
-  location?: string
+  location?: string,
+  languageCodes?: string[]
 ): Promise<{ metricsMap: Map<number, KeywordMetrics[]>; source: "mock" | "live" }> {
   const allKeywords = keywordGroups.flatMap((g) => g.keywords);
 
-  const { metrics: allMetrics, source } = await fetchKeywordMetrics(allKeywords, location);
+  const { metrics: allMetrics, source } = await fetchKeywordMetrics(allKeywords, location, languageCodes);
 
   const metricsLookup = new Map<string, KeywordMetrics>();
   for (const m of allMetrics) {

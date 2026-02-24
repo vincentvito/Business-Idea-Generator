@@ -59,9 +59,11 @@ export class DataForSEOError extends Error {
   }
 }
 
-// ─── Location code mapping (DataForSEO uses numeric Google geo target IDs) ───
+// ─── Location code mapping ───
+// Static fallback dictionary for when the comprehensive location DB hasn't loaded yet.
+// The dynamic DB (see locations.ts) covers ~95k locations worldwide via DataForSEO's free API.
 
-const LOCATION_CODES: Record<string, number> = {
+const STATIC_LOCATION_CODES: Record<string, number> = {
   "united states": 2840,
   usa: 2840,
   us: 2840,
@@ -101,16 +103,21 @@ const LOCATION_CODES: Record<string, number> = {
   barcelona: 1005493,
 };
 
+/**
+ * Synchronous location code lookup using the static fallback dictionary.
+ * Used by non-pipeline code (SERP, trends, etc.) that needs sync access.
+ * For comprehensive matching (~95k locations), use resolveLocation() from locations.ts.
+ */
 export function getLocationCode(location: string): number | null {
   const normalized = location.toLowerCase().trim();
-  if (LOCATION_CODES[normalized]) return LOCATION_CODES[normalized];
+  if (STATIC_LOCATION_CODES[normalized]) return STATIC_LOCATION_CODES[normalized];
 
   // Try "City, Country" format
   const city = normalized.split(",")[0].trim();
-  if (LOCATION_CODES[city]) return LOCATION_CODES[city];
+  if (STATIC_LOCATION_CODES[city]) return STATIC_LOCATION_CODES[city];
 
   const country = normalized.split(",").slice(1).join(",").trim();
-  if (country && LOCATION_CODES[country]) return LOCATION_CODES[country];
+  if (country && STATIC_LOCATION_CODES[country]) return STATIC_LOCATION_CODES[country];
 
   return null;
 }

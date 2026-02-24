@@ -72,7 +72,7 @@ function getStages(category: string, location: string) {
 
 const HOW_IT_WORKS = [
   { step: 1, icon: Compass, title: "Pick Food Type & Location", desc: "Choose from 12 food & beverage categories and your target market" },
-  { step: 2, icon: Sparkles, title: "AI Generates 50 Ideas", desc: "Each food business idea validated with real Google search data" },
+  { step: 2, icon: Sparkles, title: "AI Generates 10 Ideas", desc: "Each food business idea validated with real Google search data" },
   { step: 3, icon: Trophy, title: "Find Golden Opportunities", desc: "Ranked by demand, competition & profit potential" },
 ] as const;
 
@@ -82,7 +82,7 @@ const FEATURES = [
     color: "text-green-500",
     bg: "bg-green-50",
     title: "Validated Business Idea",
-    desc: "50 AI-generated ideas, each validated with real Google search volume and local competition data",
+    desc: "10 AI-generated ideas, each validated with real Google search volume and local competition data",
   },
   {
     icon: PenTool,
@@ -219,7 +219,7 @@ export default function DiscoverPage() {
             <span className="text-[#FFC859]">Food Business</span>
           </h1>
           <p className="mt-3 max-w-2xl text-base text-white/70 sm:text-lg">
-            Pick a food category and location. Our AI generates 50 food &
+            Pick a food category and location. Our AI generates 10 food &
             beverage ideas, validates them with real market data, and highlights
             the golden opportunities.
           </p>
@@ -382,6 +382,7 @@ export default function DiscoverPage() {
                 error={discovery.error}
                 stageMessage={discovery.stageMessage}
                 progress={discovery.progress}
+                stageWarnings={discovery.stageWarnings}
               />
             </div>
             <div className="md:col-span-2">

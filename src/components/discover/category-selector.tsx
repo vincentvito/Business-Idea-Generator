@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -23,6 +23,7 @@ import {
 import {
   ChevronDown,
   Loader2,
+  MapPin,
   Sparkles,
   UtensilsCrossed,
   Truck,
@@ -32,6 +33,14 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { DiscoveryFilters } from "@/types/discovery";
+
+interface LocationSuggestion {
+  name: string;
+  fullName: string;
+  code: number;
+  type: string;
+  country: string;
+}
 
 interface CategorySelectorProps {
   onSubmit: (category: string, location: string, filters: DiscoveryFilters) => void;
@@ -92,6 +101,84 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Location autocomplete state
+  const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const locationInputRef = useRef<HTMLInputElement>(null);
+
+  const fetchSuggestions = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/locations/search?q=${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data: LocationSuggestion[] = await res.json();
+        setSuggestions(data);
+        setShowSuggestions(data.length > 0);
+      }
+    } catch {
+      // Silently fail — user can still type freely
+    }
+  }, []);
+
+  // Debounced location search
+  useEffect(() => {
+    if (!location.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    const timer = setTimeout(() => fetchSuggestions(location), 300);
+    return () => clearTimeout(timer);
+  }, [location, fetchSuggestions]);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(e.target as Node) &&
+        locationInputRef.current &&
+        !locationInputRef.current.contains(e.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectSuggestion = (s: LocationSuggestion) => {
+    // Show "City, Country" format for cities, just name for countries
+    const display = s.type === "City" && s.fullName.includes(",")
+      ? s.fullName.replace(",", ", ")
+      : s.name;
+    setLocation(display);
+    setShowSuggestions(false);
+    setHighlightedIndex(-1);
+  };
+
+  const handleLocationKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev + 1) % suggestions.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev <= 0 ? suggestions.length - 1 : prev - 1));
+    } else if (e.key === "Enter" && highlightedIndex >= 0) {
+      e.preventDefault();
+      selectSuggestion(suggestions[highlightedIndex]);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  };
 
   const [budget, setBudget] = useState("");
   const [businessModel, setBusinessModel] = useState("");
@@ -218,19 +305,51 @@ export function CategorySelector({ onSubmit, isRunning, onCancel }: CategorySele
         )}
       </div>
 
-      {/* Location */}
-      <div>
+      {/* Location with autocomplete */}
+      <div className="relative">
         <label htmlFor="location" className="text-sm font-medium text-muted-foreground">
           Location{locationOptional ? " (optional)" : ""}
         </label>
         <Input
+          ref={locationInputRef}
           id="location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          onKeyDown={handleLocationKeyDown}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder={locationOptional ? "e.g., Milan, Italy (or leave empty for global)" : "e.g., Milan, Italy"}
           disabled={isRunning}
           className="mt-1.5"
+          autoComplete="off"
         />
+        {showSuggestions && suggestions.length > 0 && (
+          <div
+            ref={suggestionsRef}
+            className="absolute z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-md"
+          >
+            {suggestions.map((s, i) => (
+              <button
+                key={s.code}
+                type="button"
+                onClick={() => selectSuggestion(s)}
+                className={cn(
+                  "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors",
+                  i === highlightedIndex
+                    ? "bg-accent text-accent-foreground"
+                    : "hover:bg-accent/50"
+                )}
+              >
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <span>
+                  {s.type === "City" && s.fullName.includes(",")
+                    ? s.fullName.replace(",", ", ")
+                    : s.name}
+                </span>
+                <span className="ml-auto text-xs text-muted-foreground">{s.type}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <button

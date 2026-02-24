@@ -9,7 +9,7 @@ const steps = [
   },
   {
     icon: Sparkles,
-    title: "AI Generates 50 Ideas",
+    title: "AI Generates 10 Ideas",
     description: "Our engine researches real search data and creates data-backed food business opportunities.",
     step: 2,
   },
