@@ -160,16 +160,23 @@ async function fetchFromDataForSEO(
     cpc: getField<number>(r, "cpc") ?? 0,
   }));
 
-  // Treat empty results or all-zero data as a failure so the caller's
-  // catch block triggers the existing mock-data fallback.
-  const hasAnyData = mapped.length > 0 && mapped.some((m) => m.avg_monthly_searches > 0);
-  if (!hasAnyData) {
+  // Empty results (API returned nothing at all) is a real failure
+  if (mapped.length === 0) {
     console.warn(
-      "[DataForSEO Keywords] API returned no usable data:",
-      mapped.length, "results, all with zero volume.",
+      "[DataForSEO Keywords] API returned 0 results.",
       "Keywords queried:", keywords.slice(0, 5)
     );
-    throw new Error("DataForSEO returned empty or all-zero search volume results");
+    throw new Error("DataForSEO returned no results at all");
+  }
+
+  // Zero-volume results are legitimate live data — the keywords just have
+  // no measurable search volume. Don't treat this as a failure.
+  const withVolume = mapped.filter((m) => m.avg_monthly_searches > 0).length;
+  if (withVolume === 0) {
+    console.log(
+      "[DataForSEO Keywords] All", mapped.length, "keywords returned zero volume (legitimate live data).",
+      "Keywords:", keywords.slice(0, 5)
+    );
   }
 
   return mapped;

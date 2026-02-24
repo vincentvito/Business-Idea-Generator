@@ -162,21 +162,26 @@ async function fetchFromDataForSEO(
 
 // ─── Public API ───
 
+export interface SeedKeywordsResult {
+  keywords: SeedKeyword[];
+  source: "live" | "mock";
+}
+
 export async function fetchSeedKeywords(
   seeds: string[],
   location?: string,
   languageCodes?: string[]
-): Promise<SeedKeyword[]> {
+): Promise<SeedKeywordsResult> {
   if (isUsingMockData()) {
     await new Promise((r) => setTimeout(r, 300));
-    return generateMockSeedKeywords(seeds);
+    return { keywords: generateMockSeedKeywords(seeds), source: "mock" };
   }
 
   // Check cache (include primary language in cache key)
   const primaryLang = languageCodes?.[0] ?? "en";
   const cacheKey = [...seeds].sort().join(",") + `|${primaryLang}`;
   const cached = getCached<SeedKeyword[]>("seed", cacheKey, location);
-  if (cached) return cached;
+  if (cached) return { keywords: cached, source: "live" };
 
   try {
     // Always fetch English first
@@ -208,7 +213,7 @@ export async function fetchSeedKeywords(
     }
 
     setCache("seed", cacheKey, location, merged);
-    return merged;
+    return { keywords: merged, source: "live" };
   } catch (error) {
     const classified = classifyError(error);
     console.error(`[DataForSEO Seeds] ${classified.type}: ${classified.message}`);
@@ -218,13 +223,13 @@ export async function fetchSeedKeywords(
       try {
         const results = await fetchFromDataForSEO(seeds, location, "en");
         setCache("seed", cacheKey, location, results);
-        return results;
+        return { keywords: results, source: "live" };
       } catch (retryError) {
         console.error("[DataForSEO Seeds] Retry failed:", classifyError(retryError).message);
       }
     }
 
     console.warn("[DataForSEO Seeds] Falling back to mock data.");
-    return generateMockSeedKeywords(seeds);
+    return { keywords: generateMockSeedKeywords(seeds), source: "mock" };
   }
 }

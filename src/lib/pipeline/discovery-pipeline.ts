@@ -1,5 +1,4 @@
 import { generateIdeas } from "@/lib/ai/generate-ideas";
-import { fetchBatchKeywordMetrics } from "@/lib/dataforseo/keyword-data";
 import { fetchSeedKeywords } from "@/lib/dataforseo/keyword-suggestions";
 import type { SeedKeyword } from "@/lib/dataforseo/keyword-suggestions";
 import { resolveLocation, getLanguagesForLocation } from "@/lib/dataforseo/locations";
@@ -28,45 +27,35 @@ function seedKeywordToMetrics(sk: SeedKeyword): KeywordMetrics {
 }
 
 /**
- * Last-resort fallback: generates deterministic mock seed keywords when both
- * DataForSEO endpoints return no usable data. Uses the same hash-based
- * approach as generateMockSeedKeywords in keyword-suggestions.ts.
+ * Find the closest seed keyword to a novel keyword by word overlap.
+ * Falls back to the highest-volume seed keyword if no words overlap.
  */
-function generateFallbackSeedKeywords(seeds: string[]): SeedKeyword[] {
-  function hash(str: string): number {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) {
-      h = (h << 5) - h + str.charCodeAt(i);
-      h |= 0;
-    }
-    return Math.abs(h);
-  }
+function findClosestSeed(
+  novelKeyword: string,
+  seedKeywords: SeedKeyword[]
+): SeedKeyword {
+  const novelWords = new Set(novelKeyword.toLowerCase().split(/\s+/));
 
-  const suffixes = ["near me", "service", "best", "business", "startup"];
-  const results: SeedKeyword[] = [];
+  let bestMatch: SeedKeyword | null = null;
+  let bestOverlap = 0;
 
-  for (const seed of seeds) {
-    const h = hash(seed.toLowerCase());
-    results.push({
-      keyword: seed,
-      search_volume: 15000 + (h % 50000),
-      competition: (h % 3 === 0 ? "LOW" : h % 3 === 1 ? "MEDIUM" : "HIGH") as SeedKeyword["competition"],
-      cpc: Math.round(((h % 800) + 50) / 100 * 100) / 100,
-    });
-
-    for (const suffix of suffixes.slice(0, 3)) {
-      const variation = `${seed} ${suffix}`;
-      const vh = hash(variation.toLowerCase());
-      results.push({
-        keyword: variation,
-        search_volume: 500 + (vh % 8000),
-        competition: (vh % 3 === 0 ? "LOW" : vh % 3 === 1 ? "MEDIUM" : "HIGH") as SeedKeyword["competition"],
-        cpc: Math.round(((vh % 600) + 30) / 100 * 100) / 100,
-      });
+  for (const sk of seedKeywords) {
+    const seedWords = sk.keyword.toLowerCase().split(/\s+/);
+    const overlap = seedWords.filter((w) => novelWords.has(w)).length;
+    if (overlap > bestOverlap) {
+      bestOverlap = overlap;
+      bestMatch = sk;
     }
   }
 
-  return results;
+  // If no word overlap, return the highest-volume seed keyword
+  if (!bestMatch) {
+    bestMatch = seedKeywords.reduce((best, sk) =>
+      sk.search_volume > best.search_volume ? sk : best
+    );
+  }
+
+  return bestMatch;
 }
 
 export async function runDiscoveryPipeline(
@@ -106,7 +95,9 @@ export async function runDiscoveryPipeline(
 
   // Use resolved code for seed keyword fetch (pass location string for DataForSEO's own resolution)
   const seeds = CATEGORY_SEED_KEYWORDS[category] ?? category.toLowerCase().split(/\s*[&,]\s*/);
-  const seedKeywords = await fetchSeedKeywords(seeds, location || undefined, languageCodes);
+  const seedResult = await fetchSeedKeywords(seeds, location || undefined, languageCodes);
+  const seedKeywords = seedResult.keywords;
+  const seedSource = seedResult.source;
 
   // Kick off AI generation in the background while stages 1 & 2 show progress
   const backgroundGeneration = generateIdeas(category, location, filters, seedKeywords);
@@ -153,11 +144,11 @@ export async function runDiscoveryPipeline(
     data: allIdeas,
   });
 
-  // Stage 4: Batch Keyword Lookup — reuse seed data, only call DataForSEO for novel keywords
+  // Stage 4: Match keywords to seed data — no extra API call needed
   emit({
     type: "stage_start",
     stage: "volume_check",
-    message: "Validating real Google search demand for each idea...",
+    message: "Matching ideas to real Google search demand...",
   });
 
   // Build case-insensitive lookup from seed keywords (already have volume/CPC/competition)
@@ -166,103 +157,34 @@ export async function runDiscoveryPipeline(
     seedLookup.set(sk.keyword.toLowerCase(), sk);
   }
 
-  // Separate known (seed-matched) vs novel keywords per idea
-  const prefilledMetrics = new Map<number, KeywordMetrics[]>();
-  const novelKeywordGroups: { ideaId: number; keywords: string[] }[] = [];
+  // For each idea's keywords: exact seed match → use directly, novel → find closest seed
+  const metricsMap = new Map<number, KeywordMetrics[]>();
+  let novelCount = 0;
 
   for (const idea of allIdeas) {
-    const known: KeywordMetrics[] = [];
-    const novel: string[] = [];
+    const metrics: KeywordMetrics[] = [];
 
     for (const kw of idea.suggested_keywords) {
-      const seed = seedLookup.get(kw.toLowerCase());
-      if (seed) {
-        known.push(seedKeywordToMetrics(seed));
+      const exactMatch = seedLookup.get(kw.toLowerCase());
+      if (exactMatch) {
+        metrics.push(seedKeywordToMetrics(exactMatch));
       } else {
-        novel.push(kw);
+        // Novel keyword — find the closest seed keyword by word overlap
+        const closest = findClosestSeed(kw, seedKeywords);
+        metrics.push(seedKeywordToMetrics(closest));
+        novelCount++;
       }
     }
 
-    prefilledMetrics.set(idea.id, known);
-    if (novel.length > 0) {
-      novelKeywordGroups.push({ ideaId: idea.id, keywords: novel });
-    }
+    metricsMap.set(idea.id, metrics);
   }
 
-  // Only call DataForSEO for truly novel keywords
-  let metricsMap: Map<number, KeywordMetrics[]>;
-  let metricsSource: "mock" | "live" = "live";
-
-  const hasNovelKeywords = novelKeywordGroups.some((g) => g.keywords.length > 0);
-
-  if (hasNovelKeywords) {
-    const { metricsMap: novelMap, source } = await fetchBatchKeywordMetrics(
-      novelKeywordGroups, location || undefined, languageCodes
-    );
-    metricsSource = source;
-
-    // Merge prefilled seed metrics + novel API metrics per idea
-    metricsMap = new Map();
-    for (const idea of allIdeas) {
-      const pre = prefilledMetrics.get(idea.id) ?? [];
-      const nov = novelMap.get(idea.id) ?? [];
-      metricsMap.set(idea.id, [...pre, ...nov]);
-    }
-  } else {
-    // All keywords matched seed data — no API call needed
-    metricsMap = prefilledMetrics;
-    console.log("[Discovery] All suggested keywords found in seed data — skipped volume check API call");
+  if (novelCount > 0) {
+    console.log(`[Discovery] Matched ${novelCount} novel keywords to closest seed keywords`);
   }
 
-  // Safety net: if >70% of ideas got all-zero volume, enrich with fallback data
-  const zeroVolumeCount = allIdeas.filter((idea) => {
-    const m = metricsMap.get(idea.id) ?? [];
-    return m.length === 0 || m.every((k) => k.avg_monthly_searches === 0);
-  }).length;
-
-  if (zeroVolumeCount > allIdeas.length * 0.7) {
-    const effectiveSeedKeywords = seedKeywords.length > 0
-      ? seedKeywords
-      : generateFallbackSeedKeywords(seeds);
-
-    console.warn(
-      `[Discovery] ${zeroVolumeCount}/${allIdeas.length} ideas have zero volume`,
-      seedKeywords.length > 0
-        ? "— using seed keyword data directly"
-        : "— seedKeywords also empty, using generated fallback data"
-    );
-
-    metricsSource = "mock";
-
-    const seedMetrics: KeywordMetrics[] = [...effectiveSeedKeywords]
-      .sort((a, b) => b.search_volume - a.search_volume)
-      .slice(0, 20)
-      .map(seedKeywordToMetrics);
-
-    // Assign 2 seed metrics to each zero-volume idea (round-robin)
-    if (seedMetrics.length > 0) {
-      for (let i = 0; i < allIdeas.length; i++) {
-        const idea = allIdeas[i];
-        const existing = metricsMap.get(idea.id) ?? [];
-        if (existing.length === 0 || existing.every((k) => k.avg_monthly_searches === 0)) {
-          const idx = (i * 2) % seedMetrics.length;
-          const fallbacks = [seedMetrics[idx], seedMetrics[(idx + 1) % seedMetrics.length]];
-          idea.suggested_keywords.push(...fallbacks.map((f) => f.keyword));
-          metricsMap.set(idea.id, [...existing, ...fallbacks]);
-        }
-      }
-    }
-  }
-
-  // Final safety check: if ALL ideas still have zero volume, mark source as estimated
-  const allZero = allIdeas.every((idea) => {
-    const m = metricsMap.get(idea.id) ?? [];
-    return m.length === 0 || m.every((k) => k.avg_monthly_searches === 0);
-  });
-  if (allZero && metricsSource === "live") {
-    console.warn("[Discovery] All ideas have zero volume after pipeline — marking source as estimated");
-    metricsSource = "mock";
-  }
+  // Data source follows the seed source — all metrics come from seed data
+  const metricsSource = seedSource;
 
   emit({
     type: "stage_complete",
