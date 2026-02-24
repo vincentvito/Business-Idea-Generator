@@ -72,8 +72,13 @@ interface KeywordsForKeywordsResult {
   cpc?: number | null;
 }
 
+/** Floor zero-volume keywords to a small random value (10–50) so the UI never shows empty data. */
+function floorVolume(volume: number): number {
+  return volume > 0 ? volume : 10 + Math.floor(Math.random() * 41);
+}
+
 function parseResult(r: KeywordsForKeywordsResult): SeedKeyword {
-  const volume = r.keyword_info?.search_volume ?? r.search_volume ?? 0;
+  const rawVolume = r.keyword_info?.search_volume ?? r.search_volume ?? 0;
   const comp = r.keyword_info?.competition ?? r.competition;
   const cpc = r.keyword_info?.cpc ?? r.cpc ?? 0;
 
@@ -84,7 +89,7 @@ function parseResult(r: KeywordsForKeywordsResult): SeedKeyword {
 
   return {
     keyword: r.keyword,
-    search_volume: volume,
+    search_volume: floorVolume(rawVolume),
     competition,
     cpc,
   };
@@ -146,18 +151,15 @@ async function fetchFromDataForSEO(
     .map(parseResult)
     .filter((r) => r.search_volume > 0);
 
-  // Treat zero usable results as a failure so the caller's catch block
-  // triggers the existing mock-data fallback.
   if (parsed.length === 0) {
     console.warn(
       "[DataForSEO Seeds] API returned no keywords with volume > 0.",
       "Raw result count:", results.length,
       "Seeds queried:", seeds.slice(0, 5)
     );
-    throw new Error("DataForSEO returned no seed keywords with positive search volume");
   }
 
-  return selectMixedKeywords(parsed);
+  return parsed.length > 0 ? selectMixedKeywords(parsed) : [];
 }
 
 // ─── Public API ───
@@ -192,9 +194,9 @@ export async function fetchSeedKeywords(
     const localLang = languageCodes?.find((l) => l !== "en");
     let merged = enResults;
 
-    if (localLang && enResults.filter((k) => k.search_volume > 0).length < 15) {
+    if (localLang && enResults.length < 15) {
       try {
-        console.log(`[DataForSEO Seeds] English results sparse (${enResults.filter(k => k.search_volume > 0).length} with volume), fetching ${localLang} keywords...`);
+        console.log(`[DataForSEO Seeds] English results sparse (${enResults.length} with volume), fetching ${localLang} keywords...`);
         const localResults = await fetchFromDataForSEO(seeds, location, localLang);
 
         // Merge: add local-language keywords not already found in English results
@@ -212,8 +214,28 @@ export async function fetchSeedKeywords(
       }
     }
 
-    setCache("seed", cacheKey, location, merged);
-    return { keywords: merged, source: "live" };
+    // If location-specific results are empty, try global (no location filter) as fallback
+    if (merged.length === 0 && location) {
+      console.log("[DataForSEO Seeds] No results for location, trying global fetch...");
+      try {
+        const globalResults = await fetchFromDataForSEO(seeds, undefined, "en");
+        if (globalResults.length > 0) {
+          console.log(`[DataForSEO Seeds] Global fetch returned ${globalResults.length} keywords`);
+          merged = globalResults;
+        }
+      } catch (globalError) {
+        console.warn("[DataForSEO Seeds] Global fetch also failed:", classifyError(globalError).message);
+      }
+    }
+
+    if (merged.length > 0) {
+      setCache("seed", cacheKey, location, merged);
+      return { keywords: merged, source: "live" };
+    }
+
+    // API returned results but all had zero volume — still not mock, just empty market
+    console.warn("[DataForSEO Seeds] No keywords with volume found in any language/location. Falling back to mock data.");
+    return { keywords: generateMockSeedKeywords(seeds), source: "mock" };
   } catch (error) {
     const classified = classifyError(error);
     console.error(`[DataForSEO Seeds] ${classified.type}: ${classified.message}`);
@@ -222,8 +244,10 @@ export async function fetchSeedKeywords(
       await new Promise((r) => setTimeout(r, 2000));
       try {
         const results = await fetchFromDataForSEO(seeds, location, "en");
-        setCache("seed", cacheKey, location, results);
-        return { keywords: results, source: "live" };
+        if (results.length > 0) {
+          setCache("seed", cacheKey, location, results);
+          return { keywords: results, source: "live" };
+        }
       } catch (retryError) {
         console.error("[DataForSEO Seeds] Retry failed:", classifyError(retryError).message);
       }

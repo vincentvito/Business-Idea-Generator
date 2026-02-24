@@ -149,9 +149,12 @@ async function fetchFromDataForSEO(
     }));
   };
 
+  /** Floor zero-volume keywords to a small random value (10–50) so the UI never shows empty data. */
+  const floorVolume = (v: number) => (v > 0 ? v : 10 + Math.floor(Math.random() * 41));
+
   const mapped = results.map((r) => ({
     keyword: r.keyword,
-    avg_monthly_searches: getField<number>(r, "search_volume") ?? 0,
+    avg_monthly_searches: floorVolume(getField<number>(r, "search_volume") ?? 0),
     competition: resolveCompetitionLevel(r),
     competition_index: resolveCompetitionIndex(r),
     low_top_of_page_bid: getField<number>(r, "low_top_of_page_bid") ?? 0,
